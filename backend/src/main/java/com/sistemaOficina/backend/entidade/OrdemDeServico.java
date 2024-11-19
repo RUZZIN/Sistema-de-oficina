@@ -3,8 +3,10 @@ package com.sistemaOficina.backend.entidade;
 import java.time.LocalDateTime;
 
 import lombok.Data;
+import lombok.AllArgsConstructor;
 
 @Data
+@AllArgsConstructor
 public class OrdemDeServico {
 
     private int id;

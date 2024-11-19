@@ -2,8 +2,12 @@ package com.sistemaOficina.backend.entidade;
 
 import lombok.Data;
 
-@Data
-public class PessoaJuridica  extends Cliente {
+
+public class PessoaJuridica extends Cliente {
+
+    public PessoaJuridica() {
+        super();
+    }
     
     private String cnpj;
     private String razaoSocial;

@@ -1,7 +1,8 @@
 package com.sistemaOficina.backend.repositorio;
-import java.util.List;
 
 import com.sistemaOficina.backend.entidade.Marca;
+
+import java.util.List;
 
 public interface MarcaRepository {
     void salvar(Marca marca);
