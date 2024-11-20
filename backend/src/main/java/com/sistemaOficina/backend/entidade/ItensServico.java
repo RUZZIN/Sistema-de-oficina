@@ -1,17 +1,19 @@
 package com.sistemaOficina.backend.entidade;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
 public class ItensServico {
     private int id;
-    private String inicio;
-    private String fim;
-    private double precoTotal;
-    private int quantidade;
-
-    private Funcionario idFuncionario;
-    private Servico idServico;    
     
+    private LocalTime horarioInicio;
+    private LocalTime horarioFim; 
+    private int quantidade; 
+    private double precoTotal;
+    private Funcionario idFuncionario; 
+    private Servico idServico; 
 }

@@ -18,4 +18,6 @@ public class DatabaseConfig {
             "root"  // Replace with your DB password
         );
     }
+
+    
 }

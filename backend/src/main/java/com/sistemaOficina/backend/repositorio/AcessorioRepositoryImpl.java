@@ -26,6 +26,8 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
 
     @Override
     public void salvar(Acessorio acessorio) {
+
+
         String sql = "INSERT INTO acessorios (nome) VALUES (?)";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, acessorio.getNome());

@@ -1,7 +1,6 @@
 package com.sistemaOficina.backend.repositorio;
 
 import java.util.List;
-
 import com.sistemaOficina.backend.entidade.Modelo;
 
 public interface ModeloRepository {
