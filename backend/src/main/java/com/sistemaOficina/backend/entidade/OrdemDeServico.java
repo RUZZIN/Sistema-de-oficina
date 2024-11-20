@@ -14,6 +14,7 @@ public class OrdemDeServico {
     private String precoFinal;
     private LocalDateTime data;
     private String status;
-
+    private ItensPeca idItensPeca;
+    private ItensServico idItensServico;
     
 }

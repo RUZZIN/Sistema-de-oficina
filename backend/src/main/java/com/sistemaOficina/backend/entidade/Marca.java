@@ -7,4 +7,5 @@ import lombok.AllArgsConstructor;
 public class Marca {
     private Long id;
     private String nome;
+
 }

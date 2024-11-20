@@ -8,6 +8,5 @@ import lombok.AllArgsConstructor;
 public class Modelo {
     private int id;
     private String nome;
-    private int ano;
-    
+    private Marca idMarca;
 }
