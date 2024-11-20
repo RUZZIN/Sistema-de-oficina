@@ -1,0 +1,25 @@
+<!-- Navbar -->
+<div class="navbar">
+  <div class="navbar-brand">
+    <a href="#">AutoGyn</a>
+  </div>
+</div>
+
+<!-- Barra de Pesquisa -->
+<div class="search-bar">
+  <input type="text" placeholder="Pesquisar opções..." (input)="onSearch($event)" />
+</div>
+
+<!-- Exibe as opções filtradas -->
+<div class="options-container">
+  <div *ngFor="let option of filteredOptions" class="option" (click)="navigateTo(option)">
+    {{ option }}
+  </div>
+</div>
+
+<router-outlet></router-outlet>
+
+<!-- Rodapé -->
+<div class="footer">
+  <p>&copy; 2024 AutoGyn - Sistema de Controle de Oficina Mecânica</p>
+</div>
