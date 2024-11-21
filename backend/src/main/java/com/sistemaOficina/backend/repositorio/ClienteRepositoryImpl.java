@@ -25,7 +25,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
     @Override
     public void salvar(Cliente cliente) {
-        String sql = "INSERT INTO clientes (nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj, inscricao_estadual, contato, tipo_cliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cliente (nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj, inscricao_estadual, contato, tipo_cliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             setCommonParameters(stmt, cliente);
             stmt.executeUpdate();
@@ -36,7 +36,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
     @Override
     public void atualizar(Cliente cliente) {
-        String sql = "UPDATE clientes SET nome = ?, logradouro = ?, numero = ?, complemento = ?, ddi1 = ?, ddd1 = ?, numero1 = ?, ddi2 = ?, ddd2 = ?, numero2 = ?, email = ?, cpf = ?, cnpj = ?, inscricao_estadual = ?, contato = ?, tipo_cliente = ? WHERE id = ?";
+        String sql = "UPDATE cliente SET nome = ?, logradouro = ?, numero = ?, complemento = ?, ddi1 = ?, ddd1 = ?, numero1 = ?, ddi2 = ?, ddd2 = ?, numero2 = ?, email = ?, cpf = ?, cnpj = ?, inscricao_estadual = ?, contato = ?, tipo_cliente = ? WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             setCommonParameters(stmt, cliente);
             stmt.setLong(17, cliente.getId());
@@ -48,7 +48,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
     @Override
     public void deletar(Long id) {
-        String sql = "DELETE FROM clientes WHERE id = ?";
+        String sql = "DELETE FROM cliente WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
@@ -59,7 +59,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
     @Override
     public Cliente buscarPorId(Long id) {
-        String sql = "SELECT * FROM clientes WHERE id = ?";
+        String sql = "SELECT * FROM cliente WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -74,17 +74,17 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
     @Override
     public List<Cliente> buscarTodos() {
-        List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM clientes";
+        List<Cliente> cliente = new ArrayList<>();
+        String sql = "SELECT * FROM cliente";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                clientes.add(mapResultSetToCliente(rs));
+                cliente.add(mapResultSetToCliente(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return clientes;
+        return cliente;
     }
 
     private void setCommonParameters(PreparedStatement stmt, Cliente cliente) throws SQLException {
