@@ -13,13 +13,17 @@ public class PessoaJuridica extends Cliente {
     private String cnpj;
     private String razaoSocial;
     private String contato;
-
-    public PessoaJuridica(Long id, String nome, String logradouro, String numero, String complemento,
-                          String ddi1, String ddd1, String numero1, String ddi2, String ddd2, String numero2,
-                          String email, String cnpj, String inscricaoEstadual, String contato) {
-        super(id, nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, null, cnpj, inscricaoEstadual, contato, "PessoaJuridica");
-        this.cnpj = cnpj;
-        this.contato = contato;
+    public PessoaJuridica(Long id, String nome, String logradouro, String numero, String complemento, Integer ddi1,
+            Integer ddd1, Integer numero1, Integer ddi2, Integer ddd2, Integer numero2, String email, String cpf,
+            String cnpj, String inscricaoEstadual, String contato, String tipoCliente, String cnpj2, String razaoSocial,
+            String contato2) {
+        super(id, nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj,
+                inscricaoEstadual, contato, tipoCliente);
+        cnpj = cnpj2;
+        this.razaoSocial = razaoSocial;
+        contato = contato2;
     }
+
+
 }
 
