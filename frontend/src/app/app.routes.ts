@@ -9,6 +9,7 @@ import { OsComponent } from './os/os.component';
 import { PecasComponent } from './pecas/pecas.component';
 import { ServicosComponent } from './servicos/servicos.component';
 import { VeiculosComponent } from './veiculos/veiculos.component';
+import { provideHttpClient } from '@angular/common/http';
 
 export const routes: Routes = [
   { path: '', component: AppComponent }, // Tela inicial
@@ -19,10 +20,3 @@ export const routes: Routes = [
   { path: 'pecas', component: PecasComponent },
   { path: 'funcionarios', component: FuncionariosComponent },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {useHash: true})],
-  exports: [RouterModule],
-})
-
-export class AppRoutingModule {}

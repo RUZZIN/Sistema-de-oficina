@@ -3,11 +3,37 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';  // Para usar ngFor, ngIf, etc.
 import { FormsModule } from '@angular/forms';   // Para ngModel (caso você queira usar no futuro)
+import { ClienteService } from '../services/cliente.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  templateUrl: './app.component.html',
+  template:` <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-brand">
+      <a href="#">AutoGyn</a>
+    </div>
+  </div>
+  
+  <!-- Barra de Pesquisa -->
+  <div class="search-bar">
+    <input type="text" placeholder="Pesquisar opções..." (input)="onSearch($event)" />
+  </div>
+  
+  <!-- Exibe as opções filtradas -->
+  <div class="options-container">
+    <div *ngFor="let option of filteredOptions" class="option" (click)="navigateTo(option)">
+      {{ option }}
+    </div>
+  </div>
+  
+  <router-outlet></router-outlet>
+  
+  <!-- Rodapé -->
+  <div class="footer">
+    <p>&copy; 2024 AutoGyn - Sistema de Controle de Oficina Mecânica</p>
+  </div>
+  `,
   styleUrls: ['./app.component.css'],
   imports: [CommonModule, FormsModule, RouterModule]
 })
@@ -24,7 +50,9 @@ export class AppComponent { // O chat que fez então não toque porque eu não s
 
   filteredOptions: string[] = [...this.options];  //Aqui vai mostrar essa bosta de opcoes
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.clienteService.getClientes().subscribe((x) => {console.log(x)});
+  }
 
   // Função para redirecionar com base na opção
   navigateTo(option: string): void {
@@ -46,7 +74,7 @@ export class AppComponent { // O chat que fez então não toque porque eu não s
   }
   }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private clienteService: ClienteService) {}
 
   // Função de pesquisa
   onSearch(event: Event) {
