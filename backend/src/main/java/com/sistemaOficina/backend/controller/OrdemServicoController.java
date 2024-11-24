@@ -56,11 +56,25 @@ public class OrdemServicoController {
 
         // Buscar todos os itens de peça e serviço
         for (ItensPeca itensPecaRequest : request.getItensPeca()) {
+            
+
             Long idPeca = itensPecaRequest.getIdPeca().getId();
-            Pecas peca = pecasRepository.buscarPorId(idPeca); // Buscar peça pelo ID
+            Pecas peca = pecasRepository.buscarPorId(idPeca); 
+
+            int quantidadeUsadaPeca = itensPecaRequest.getQuantidade();
+
+            int quantidadeUsadaPecaEstoque = peca.getQuantidade();
+
+            if (quantidadeUsadaPeca > quantidadeUsadaPecaEstoque) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantidade de peças insuficiente");
+            }
+
+            peca.setQuantidade(quantidadeUsadaPecaEstoque - quantidadeUsadaPeca);
+
+            pecasRepository.atualizar(peca);
 
             double precoPecaTotal = itensPecaRequest.getQuantidade() * peca.getPrecoUnitario();
-            precoTotal += precoPecaTotal; // Acumula o preço total das peças
+            precoTotal += precoPecaTotal;
 
             // Criar e salvar o item de peça
             ItensPeca itensPeca = new ItensPeca(
@@ -69,6 +83,9 @@ public class OrdemServicoController {
                     itensPecaRequest.getQuantidade(),
                     ordemServicoRepository.buscarPorId(numero),
                     peca);
+
+            
+
             itensPecaRepository.salvar(itensPeca);
         }
 
