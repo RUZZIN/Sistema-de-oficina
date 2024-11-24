@@ -20,7 +20,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
 
     @Override
     public void salvar(Funcionario funcionario) {
-        String sql = "INSERT INTO funcionarios (nome) VALUES (?)";
+        String sql = "INSERT INTO funcionario (nome) VALUES (?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
             stmt.executeUpdate();
@@ -31,7 +31,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
 
     @Override
     public void atualizar(Funcionario funcionario) {
-        String sql = "UPDATE funcionarios SET nome = ? WHERE id = ?";
+        String sql = "UPDATE funcionario SET nome = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
             stmt.setLong(2, funcionario.getId());
@@ -43,7 +43,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
 
     @Override
     public void deletar(Long id) {
-        String sql = "DELETE FROM funcionarios WHERE id = ?";
+        String sql = "DELETE FROM funcionario WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
@@ -54,7 +54,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
 
     @Override
     public Funcionario buscarPorId(Long id) {
-        String sql = "SELECT * FROM funcionarios WHERE id = ?";
+        String sql = "SELECT * FROM funcionario WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -70,7 +70,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
     @Override
     public List<Funcionario> buscarTodos() {
         List<Funcionario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM funcionarios";
+        String sql = "SELECT * FROM funcionario";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

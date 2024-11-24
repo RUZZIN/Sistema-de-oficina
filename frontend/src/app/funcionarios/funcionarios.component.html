@@ -1,0 +1,52 @@
+<!-- Navbar -->
+<div class="navbar">
+  <div class="navbar-brand">
+    <a href="#">AutoGyn</a>
+  </div>
+</div>
+
+
+<div class="cadastro-funcionarios">
+  <!-- Campo de entrada para o nome -->
+  <div class="form-group">
+    <label for="nomeFuncionario">Nome do Funcionário:</label>
+    <input
+      id="nomeFuncionario"
+      type="text"
+      [(ngModel)]="novoFuncionario"
+      placeholder="Digite o nome do funcionário"
+    />
+  </div>
+
+  <!-- Botões -->
+  <div class="buttons">
+    <button (click)="salvarFuncionario()">Salvar Cadastro</button>
+    <button (click)="voltarParaInicial()">Voltar</button>
+    <button (click)="excluirFuncionario()">Excluir Funcionário</button>
+  </div>
+
+  <!-- Visualizar Funcionários -->
+  <div class="visualizar-funcionarios">
+    <h3>Funcionários Cadastrados</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let funcionario of funcionarios; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ funcionario }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Rodapé -->
+<div class="footer">
+  <p>&copy; 2024 AutoGyn - Sistema de Controle de Oficina Mecânica</p>
+</div>

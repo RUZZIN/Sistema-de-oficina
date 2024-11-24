@@ -25,7 +25,7 @@ public class ModeloController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizar(@PathVariable Long id, @RequestBody Modelo modelo) {
-        modelo.setId(id.intValue());
+        modelo.setLong(id);
         modeloRepository.atualizar(modelo);
         return ResponseEntity.ok().build();
     }

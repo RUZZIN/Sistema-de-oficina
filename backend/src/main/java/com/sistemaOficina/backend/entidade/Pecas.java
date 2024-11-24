@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 @Data
 @AllArgsConstructor
 public class Pecas {
-
-    private int id;
+    private Long id;
     private String codigo;
     private String nome;
     private double precoUnitario;
     private int quantidade;
-    
-    
+
+    public Pecas(Long id) {
+        this.id = id;
+    }
 
 }

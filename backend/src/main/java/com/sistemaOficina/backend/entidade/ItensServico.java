@@ -9,11 +9,11 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ItensServico {
     private int id;
-    
     private LocalTime horarioInicio;
-    private LocalTime horarioFim; 
-    private int quantidade; 
+    private LocalTime horarioFim;
+    private int quantidade;
     private double precoTotal;
-    private Funcionario idFuncionario; 
-    private Servico idServico; 
+    private Funcionario idFuncionario;
+    private Servico idServico;   
+    private OrdemServico numeroOs;      
 }

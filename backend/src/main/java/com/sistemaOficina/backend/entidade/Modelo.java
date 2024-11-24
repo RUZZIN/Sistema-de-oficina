@@ -6,10 +6,17 @@ import lombok.AllArgsConstructor;
 @Data
 @AllArgsConstructor
 public class Modelo {
-    public Modelo(long long1) {
-        //TODO Auto-generated constructor stub
+    private Long id;
+
+    public Modelo(Long id) {
+        this.id = id;
     }
-    private int id;
+
     private String nome;
     private Marca idMarca;
+
+    public void setLong(Long id2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setLong'");
+    }
 }

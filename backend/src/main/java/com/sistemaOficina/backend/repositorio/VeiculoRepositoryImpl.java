@@ -24,7 +24,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
 
     @Override
     public void salvar(Veiculo veiculo) {
-        String sql = "INSERT INTO veiculos (placa, quilometragem, chassi, patrimonio, ano_modelo, ano_fabricacao, id_modelo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO veiculo (placa, quilometragem, chassi, patrimonio, ano_modelo, ano_fabricacao, id_modelo) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, veiculo.getPlaca());
             stmt.setInt(2, veiculo.getQuilometragem());
@@ -32,8 +32,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
             stmt.setString(4, veiculo.getPatrimonio());
             stmt.setInt(5, veiculo.getAnoModelo());
             stmt.setInt(6, veiculo.getAnoFabricacao());
-            stmt.setLong(7, veiculo.getIdModelo().getId());  // ID do Modelo
-
+            stmt.setLong(7, veiculo.getIdModelo().getId()); // ID do Modelo
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -42,7 +41,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
 
     @Override
     public void atualizar(Veiculo veiculo) {
-        String sql = "UPDATE veiculos SET placa = ?, quilometragem = ?, chassi = ?, patrimonio = ?, ano_modelo = ?, ano_fabricacao = ?, id_modelo = ? WHERE id = ?";
+        String sql = "UPDATE veiculo SET placa = ?, quilometragem = ?, chassi = ?, patrimonio = ?, ano_modelo = ?, ano_fabricacao = ?, id_modelo = ? WHERE placa = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, veiculo.getPlaca());
             stmt.setInt(2, veiculo.getQuilometragem());
@@ -51,7 +50,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
             stmt.setInt(5, veiculo.getAnoModelo());
             stmt.setInt(6, veiculo.getAnoFabricacao());
             stmt.setLong(7, veiculo.getIdModelo().getId());  // ID do Modelo
-            stmt.setLong(8, veiculo.getId());  // ID do Veículo
+            stmt.setString(8, veiculo.getPlaca());  // Placa para atualização
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -60,10 +59,10 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     }
 
     @Override
-    public void deletar(Long id) {
-        String sql = "DELETE FROM veiculos WHERE id = ?";
+    public void deletar(String placa) {
+        String sql = "DELETE FROM veiculo WHERE placa = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
+            stmt.setString(1, placa);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,24 +70,28 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     }
 
     @Override
-    public Veiculo buscarPorId(Long id) {
-        String sql = "SELECT * FROM veiculos WHERE id = ?";
+    public Veiculo buscarPorPlaca(String placa) {
+        String sql = "SELECT * FROM veiculo WHERE placa = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
+            stmt.setString(1, placa);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return mapResultSetToVeiculo(rs);
+            } else {
+                // Adicione um log para verificar a situação
+                System.out.println("Veículo com placa " + placa + " não encontrado.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+    
 
     @Override
     public List<Veiculo> buscarTodos() {
         List<Veiculo> veiculos = new ArrayList<>();
-        String sql = "SELECT * FROM veiculos";
+        String sql = "SELECT * FROM veiculo";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -101,19 +104,18 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     }
 
     private Veiculo mapResultSetToVeiculo(ResultSet rs) throws SQLException {
-        // Aqui vamos mapear os campos para a entidade Veiculo
+        // Mapeia os resultados para a entidade Veiculo
         Long idModelo = rs.getLong("id_modelo");
-        Modelo modelo = new Modelo(idModelo);  // Criando objeto Modelo com ID
+        Modelo modelo = new Modelo(idModelo); // Criando objeto Modelo com ID
 
         return new Veiculo(
-            rs.getLong("id"),
             rs.getString("placa"),
             rs.getInt("quilometragem"),
             rs.getString("chassi"),
             rs.getString("patrimonio"),
             rs.getInt("ano_modelo"),
             rs.getInt("ano_fabricacao"),
-            modelo
+            modelo // Modelo associado
         );
     }
 }

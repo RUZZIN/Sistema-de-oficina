@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class Funcionario {
     
+    public Funcionario(Long id) {
+        this.id = id;
+    }
     private Long id;
     private String nome;
     
