@@ -1,106 +1,82 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Geral */
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  background-color: #007bff; /* Cor de fundo da barra */
 }
 
 /* Navbar */
 .navbar {
-  background-color: #007bff;
+  background-color: #007bff; /* Cor de fundo da barra */
   color: white;
-  padding: 10px 0;
-  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.navbar .navbar-brand a {
-  color: white;
-  font-weight: bold;
-  font-size: 1.8rem;
-  text-decoration: none;
-  padding-left: 10px;
-}
-
-/* Barra de Pesquisa */
-.search-bar {
+.navbar-inner {
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 30px;
-}
-
-.search-bar input {
-  width: 60%;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-/* Container das opções */
-.container {
-  display: flex;
-  flex-direction: column;
+  justify-content: space-between; /* Espaço entre o título/logo e os links */
   align-items: center;
-  margin-top: 40px;
+  padding: 10px 20px;
 }
 
-/* Container das opções organizadas em 3 colunas */
-.options-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  width: 70%;
-  text-align: center;
-  margin-top: 20px;
-  padding-left: 27%;
-}
-
-/* Estilo para cada opção */
-.option {
-  background-color: #f4f4f4;
-  padding: 20px;
-  text-align: center;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  box-sizing: border-box;
-}
-
-.option:hover {
-  background-color: #007bff;
+.navbar-title h1 {
+  margin-left: 10px;
+  font-size: 24px;
+  font-weight: bold;
   color: white;
+}
+
+.navbar-links {
+  display: flex;
+  margin-left: auto; /* Move os links para a direita */
+  gap: 15px; /* Espaçamento entre os links */
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  color: #ffcc00; /* Cor ao passar o mouse */
+}
+
+.navbar-links a.active {
+  border-bottom: 2px solid #ffcc00; /* Estilo para o link ativo */
 }
 
 /* Rodapé */
 .footer {
-  background-color: #007bff;
+  background-color: #007bff; /* Cor de fundo da barra */
   color: white;
   text-align: center;
-  padding: 10px;
+  padding: 10px 0;
   position: fixed;
-  width: 100%;
   bottom: 0;
-  box-sizing: border-box;
+  width: 100%;
+  font-size: 14px;
 }
 
-.option a {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f4f4f4;
-  transition: background-color 0.3s, color 0.3s;
-}
+/* Responsividade */
+@media (max-width: 768px) {
+  .navbar-inner {
+      flex-direction: column; /* Empilha logo e links verticalmente */
+      align-items: flex-start;
+  }
 
-.option a:hover {
-  background-color: #007bff;
-  color: white;
+  .navbar-title {
+      margin-bottom: 10px;
+  }
+
+  .navbar-links {
+      width: 100%;
+      justify-content: flex-end; /* Mantém links alinhados à direita em dispositivos menores */
+      gap: 10px;
+  }
 }

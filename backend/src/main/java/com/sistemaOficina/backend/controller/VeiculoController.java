@@ -20,7 +20,7 @@ public class VeiculoController {
 
     // Método para salvar um veículo (POST)
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED) // Indica que a resposta deve ter o status 201 (Criado)
+    @ResponseStatus(HttpStatus.CREATED) 
     public void salvar(@RequestBody Veiculo veiculo) {
         veiculoRepository.salvar(veiculo);
     }

@@ -12,7 +12,6 @@ import { VeiculosComponent } from './veiculos/veiculos.component';
 import { provideHttpClient } from '@angular/common/http';
 
 export const routes: Routes = [
-  { path: '', component: AppComponent }, // Tela inicial
   { path: 'veiculos', component: VeiculosComponent },
   { path: 'clientes', component: ClientesComponent },
   { path: 'os', component: OsComponent },
