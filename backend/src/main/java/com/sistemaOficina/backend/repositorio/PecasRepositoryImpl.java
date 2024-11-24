@@ -24,13 +24,13 @@ public class PecasRepositoryImpl implements PecasRepository {
     }
 
     @Override
-    public void salvar(Pecas pecas) {
-        String sql = "INSERT INTO pecas (codigo, nome, preco_unitario, quantidade) VALUES (?, ?, ?, ?)";
+    public void salvar(Pecas peca) {
+        String sql = "INSERT INTO peca (codigo, nome, preco_unitario, quantidade) VALUES (?, ?, ?, ?)";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, pecas.getCodigo());
-            stmt.setString(2, pecas.getNome());
-            stmt.setDouble(3, pecas.getPrecoUnitario());
-            stmt.setInt(4, pecas.getQuantidade());
+            stmt.setString(1, peca.getCodigo());
+            stmt.setString(2, peca.getNome());
+            stmt.setDouble(3, peca.getPrecoUnitario());
+            stmt.setInt(4, peca.getQuantidade());
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,14 +38,14 @@ public class PecasRepositoryImpl implements PecasRepository {
     }
 
     @Override
-    public void atualizar(Pecas pecas) {
-        String sql = "UPDATE pecas SET codigo = ?, nome = ?, preco_unitario = ?, quantidade = ? WHERE id = ?";
+    public void atualizar(Pecas peca) {
+        String sql = "UPDATE peca SET codigo = ?, nome = ?, preco_unitario = ?, quantidade = ? WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, pecas.getCodigo());
-            stmt.setString(2, pecas.getNome());
-            stmt.setDouble(3, pecas.getPrecoUnitario());
-            stmt.setInt(4, pecas.getQuantidade());
-            stmt.setInt(5, pecas.getId());
+            stmt.setString(1, peca.getCodigo());
+            stmt.setString(2, peca.getNome());
+            stmt.setDouble(3, peca.getPrecoUnitario());
+            stmt.setInt(4, peca.getQuantidade());
+            stmt.setLong(5, peca.getId());
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class PecasRepositoryImpl implements PecasRepository {
 
     @Override
     public void deletar(Long id) {
-        String sql = "DELETE FROM pecas WHERE id = ?";
+        String sql = "DELETE FROM peca WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
@@ -65,13 +65,13 @@ public class PecasRepositoryImpl implements PecasRepository {
 
     @Override
     public Pecas buscarPorId(Long id) {
-        String sql = "SELECT * FROM pecas WHERE id = ?";
+        String sql = "SELECT * FROM peca WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Pecas(
-                        rs.getInt("id"),
+                        rs.getLong("id"),
                         rs.getString("codigo"),
                         rs.getString("nome"),
                         rs.getDouble("preco_unitario"),
@@ -87,12 +87,12 @@ public class PecasRepositoryImpl implements PecasRepository {
     @Override
     public List<Pecas> buscarTodos() {
         List<Pecas> lista = new ArrayList<>();
-        String sql = "SELECT * FROM pecas";
+        String sql = "SELECT * FROM peca";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 lista.add(new Pecas(
-                        rs.getInt("id"),
+                        rs.getLong("id"),
                         rs.getString("codigo"),
                         rs.getString("nome"),
                         rs.getDouble("preco_unitario"),

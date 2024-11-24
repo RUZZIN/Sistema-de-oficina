@@ -40,7 +40,7 @@ public class ModeloRepositoryImpl implements ModeloRepository {
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, modelo.getNome());
             stmt.setLong(2, modelo.getIdMarca().getId());
-            stmt.setInt(3, modelo.getId());
+            stmt.setLong(3, modelo.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +91,7 @@ public class ModeloRepositoryImpl implements ModeloRepository {
     private Modelo mapResultSetToModelo(ResultSet rs) throws SQLException {
         Marca marca = new Marca(rs.getInt("id_marca")); // Marca apenas com ID
         return new Modelo(
-                rs.getInt("id"),
+                rs.getLong("id"),
                 rs.getString("nome"),
                 marca
         );

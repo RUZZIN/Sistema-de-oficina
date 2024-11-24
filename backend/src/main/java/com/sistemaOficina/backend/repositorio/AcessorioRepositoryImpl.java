@@ -28,7 +28,7 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
     public void salvar(Acessorio acessorio) {
 
 
-        String sql = "INSERT INTO acessorios (nome) VALUES (?)";
+        String sql = "INSERT INTO acessorio (nome) VALUES (?)";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, acessorio.getNome());
             stmt.executeUpdate();
@@ -39,7 +39,7 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
 
     @Override
     public void atualizar(Acessorio acessorio) {
-        String sql = "UPDATE acessorios SET nome = ? WHERE id = ?";
+        String sql = "UPDATE acessorio SET nome = ? WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, acessorio.getNome());
             stmt.setLong(2, acessorio.getId());
@@ -51,7 +51,7 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
 
     @Override
     public void deletar(Long id) {
-        String sql = "DELETE FROM acessorios WHERE id = ?";
+        String sql = "DELETE FROM acessorio WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
@@ -62,7 +62,7 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
 
     @Override
     public Acessorio buscarPorId(Long id) {
-        String sql = "SELECT * FROM acessorios WHERE id = ?";
+        String sql = "SELECT * FROM acessorio WHERE id = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -78,7 +78,7 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
     @Override
     public List<Acessorio> buscarTodos() {
         List<Acessorio> lista = new ArrayList<>();
-        String sql = "SELECT * FROM acessorios";
+        String sql = "SELECT * FROM acessorio";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

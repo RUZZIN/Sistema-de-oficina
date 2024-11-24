@@ -3,42 +3,118 @@ package com.sistemaOficina.backend.repositorio;
 import com.sistemaOficina.backend.entidade.Servico;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class ServicoRepositoryImpl implements ServicoRepository {
 
-    private final List<Servico> bancoDeDadosSimulado = new ArrayList<>();
+    private final DataSource dataSource;
+
+    // Construtor que recebe o DataSource para a conexão com o banco
+    public ServicoRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    // Método auxiliar para obter a conexão com o banco
+    private Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
 
     @Override
     public void salvar(Servico servico) {
-        servico.setId((long) (bancoDeDadosSimulado.size() + 1));
-        bancoDeDadosSimulado.add(servico);
+        String sql = "INSERT INTO servico (nome, preco_unitario) VALUES (?, ?)";
+
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, servico.getNome());
+            statement.setDouble(2, servico.getPrecoUnitario());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao salvar serviço", e);
+        }
     }
 
     @Override
     public void atualizar(Servico servico) {
-        deletar(servico.getId());
-        bancoDeDadosSimulado.add(servico);
+        String sql = "UPDATE servico SET nome = ?, preco_unitario = ? WHERE id = ?";
+
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, servico.getNome());
+            statement.setDouble(2, servico.getPrecoUnitario());
+            statement.setLong(3, servico.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao atualizar serviço", e);
+        }
     }
 
     @Override
     public void deletar(Long id) {
-        bancoDeDadosSimulado.removeIf(servico -> servico.getId().equals(id));
+        String sql = "DELETE FROM servico WHERE id = ?";
+
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao deletar serviço", e);
+        }
     }
 
     @Override
     public Servico buscarPorId(Long id) {
-        Optional<Servico> servico = bancoDeDadosSimulado.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
-        return servico.orElse(null);
+        String sql = "SELECT * FROM servico WHERE id = ?";
+        Servico servico = null;
+
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    servico = new Servico(
+                            resultSet.getLong("id"),
+                            resultSet.getString("nome"),
+                            resultSet.getDouble("preco_unitario")
+                    );
+                } else {
+                    throw new SQLException("Serviço com ID " + id + " não encontrado.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar serviço com ID " + id, e);
+        }
+
+        return servico;
     }
 
     @Override
     public List<Servico> buscarTodos() {
-        return bancoDeDadosSimulado;
+        String sql = "SELECT * FROM servico";
+        List<Servico> servicos = new ArrayList<>();
+
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Servico servico = new Servico(
+                        resultSet.getLong("id"),
+                        resultSet.getString("nome"),
+                        resultSet.getDouble("preco_unitario")
+                );
+                servicos.add(servico);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar todos os serviços", e);
+        }
+
+        return servicos;
     }
 }

@@ -4,6 +4,7 @@ import com.sistemaOficina.backend.entidade.Veiculo;
 import com.sistemaOficina.backend.repositorio.VeiculoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -17,30 +18,39 @@ public class VeiculoController {
         this.veiculoRepository = veiculoRepository;
     }
 
+    // Método para salvar um veículo (POST)
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.CREATED) // Indica que a resposta deve ter o status 201 (Criado)
     public void salvar(@RequestBody Veiculo veiculo) {
         veiculoRepository.salvar(veiculo);
     }
 
-    @PutMapping("/{id}")
-    public void atualizar(@PathVariable Long id, @RequestBody Veiculo veiculo) {
-        veiculo.setId(id); // Garantir que o ID é o do path
+    // Método para atualizar um veículo (PUT)
+    @PutMapping("/{placa}")
+    public void atualizar(@PathVariable String placa, @RequestBody Veiculo veiculo) {
+        veiculo.setPlaca(placa); // Garantir que a placa no path é usada para atualização
         veiculoRepository.atualizar(veiculo);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        veiculoRepository.deletar(id);
+    // Método para deletar um veículo (DELETE)
+    @DeleteMapping("/{placa}")
+    public void deletar(@PathVariable String placa) {
+        veiculoRepository.deletar(placa);
     }
 
-    @GetMapping("/{id}")
-    public Veiculo buscarPorId(@PathVariable Long id) {
-        return veiculoRepository.buscarPorId(id);
+    // Método para buscar um veículo por placa (GET)
+    @GetMapping("/{placa}")
+    public Veiculo buscarPorPlaca(@PathVariable String placa) {
+        Veiculo veiculo = veiculoRepository.buscarPorPlaca(placa);
+        if (veiculo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado");
+        }
+        return veiculo; // Retorna o veículo encontrado
     }
 
+    // Método para buscar todos os veículos (GET)
     @GetMapping
     public List<Veiculo> buscarTodos() {
-        return veiculoRepository.buscarTodos();
+        return veiculoRepository.buscarTodos(); // Retorna uma lista de todos os veículos
     }
 }

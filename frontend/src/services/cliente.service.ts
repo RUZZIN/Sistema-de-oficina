@@ -10,7 +10,7 @@ export class ClienteService {
   constructor(private httpClient: HttpClient) { }
 
   getClientes(): Observable<any> {
-    return this.httpClient.get('http://localhost:8080/api/funcionarios');
+    return this.httpClient.get('http://localhost:8080/api/clientes');
   }
 
 }
