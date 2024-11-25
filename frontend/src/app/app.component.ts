@@ -15,10 +15,6 @@ import { ClienteService } from '../services/cliente.service';
 
 export class AppComponent { 
 
-  ngOnInit(): void {
-    this.clienteService.getClientes().subscribe((x) => {console.log(x)});
-  }
-
 
   constructor(private router: Router, private clienteService: ClienteService) { }
 }

@@ -10,12 +10,13 @@ import { PecasComponent } from './pecas/pecas.component';
 import { ServicosComponent } from './servicos/servicos.component';
 import { VeiculosComponent } from './veiculos/veiculos.component';
 import { provideHttpClient } from '@angular/common/http';
+import { EstoqueComponent } from './estoque/estoque.component';
 
 export const routes: Routes = [
   { path: 'veiculos', component: VeiculosComponent },
   { path: 'clientes', component: ClientesComponent },
   { path: 'os', component: OsComponent },
   { path: 'servicos', component: ServicosComponent },
-  { path: 'pecas', component: PecasComponent },
+  { path: 'estoque', component: EstoqueComponent },
   { path: 'funcionarios', component: FuncionariosComponent },
 ];

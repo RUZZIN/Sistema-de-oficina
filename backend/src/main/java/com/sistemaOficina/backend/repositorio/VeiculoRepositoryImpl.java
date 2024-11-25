@@ -32,7 +32,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
             stmt.setString(4, veiculo.getPatrimonio());
             stmt.setInt(5, veiculo.getAnoModelo());
             stmt.setInt(6, veiculo.getAnoFabricacao());
-            stmt.setLong(7, veiculo.getIdModelo().getId()); // ID do Modelo
+            stmt.setLong(7, veiculo.getIdModelo().getId()); 
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
