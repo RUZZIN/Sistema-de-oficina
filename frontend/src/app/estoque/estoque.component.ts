@@ -83,10 +83,9 @@ export class EstoqueComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         if (this.selectedPecas && this.selectedPecas.length > 0) {
-          // Filtra apenas as peças com ID válido
           const deleteRequests = this.selectedPecas
-            .filter((peca) => peca.id !== undefined) // Remove itens sem ID
-            .map((peca) => this.estoqueService.deletePeca(peca.id!)); // Use o operador de negação '!' para garantir que não é undefined
+            .filter((peca) => peca.id !== undefined) 
+            .map((peca) => this.estoqueService.deletePeca(peca.id!));
   
           if (deleteRequests.length > 0) {
             forkJoin(deleteRequests).subscribe({
@@ -129,25 +128,22 @@ export class EstoqueComponent implements OnInit {
   }
 
   deletePeca(peca: Peca) {
+    console.log(peca)
     this.confirmationService.confirm({
-      message: 'Tem certeza que deseja deletar ' + peca.nome + '?',
-      header: 'Confirmar',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        if (peca.id) {
-          this.estoqueService.deletePeca(peca.id).subscribe(() => {
-            this.loadPecas();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Peça deletada',
-              life: 3000,
-            });
-          });
+        message: 'Are you sure you want to delete ' + peca.nome + '?',
+        header: 'Confirm',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            if (peca.id !== undefined) {
+                this.estoqueService.deletePeca(peca.id).subscribe(() => {
+                    this.loadPecas();
+                    this.peca = {};
+                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+                });
+            }
         }
-      },
     });
-  }
+}
 
   hideDialog() {
     this.pecaDialog = false;
