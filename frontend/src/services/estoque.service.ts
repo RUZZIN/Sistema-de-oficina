@@ -23,7 +23,7 @@ export class EstoqueService {
 
   // Adicionar nova peça
   addPeca(peca: Peca): Observable<void> {
-    return this.httpClient.post<void>(this.apiUrl, peca);
+    return this.httpClient.post<void>(this.apiUrl, peca)
   }
 
   // Atualizar uma peça existente
@@ -33,6 +33,7 @@ export class EstoqueService {
 
   // Deletar uma peça
   deletePeca(id: number): Observable<void> {
+    console.log("Entrou na func")
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
