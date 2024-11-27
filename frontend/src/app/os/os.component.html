@@ -41,7 +41,7 @@
     [modal]="true" styleClass="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
-            <label for="placaVeiculo">Placa do Veículo</label>
+            <label for="placaVeiculo">Veículo</label>
                 <p-dropdown 
                 [options]="veiculos" 
                 [(ngModel)]="selectedVeiculo" 
@@ -52,7 +52,7 @@
                 placeholder="Selecione um Veículo">
                 <ng-template let-veiculo pTemplate="item">
                     <div class="flex align-items-center gap-2">
-                        <div>{{ veiculo.placa }}</div>
+                        <div>{{ veiculo.modelo }}</div>
                     </div>
                 </ng-template>
             </p-dropdown>
