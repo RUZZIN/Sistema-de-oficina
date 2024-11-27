@@ -14,8 +14,11 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
 
     private final DataSource dataSource;
 
-    public VeiculoRepositoryImpl(DataSource dataSource) {
+    private final ModeloRepositoryImpl modeloRepositoryImpl;
+
+    public VeiculoRepositoryImpl(DataSource dataSource, ModeloRepositoryImpl modeloRepositoryImpl) {
         this.dataSource = dataSource;
+        this.modeloRepositoryImpl = modeloRepositoryImpl;
     }
 
     private Connection getConnection() throws SQLException {
@@ -106,8 +109,8 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     private Veiculo mapResultSetToVeiculo(ResultSet rs) throws SQLException {
         // Mapeia os resultados para a entidade Veiculo
         Long idModelo = rs.getLong("id_modelo");
-        Modelo modelo = new Modelo(idModelo); // Criando objeto Modelo com ID
-
+        Modelo modelo = modeloRepositoryImpl.buscarPorId(idModelo);
+System.err.println("aqui: " + modelo);
         return new Veiculo(
             rs.getString("placa"),
             rs.getInt("quilometragem"),
@@ -115,7 +118,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
             rs.getString("patrimonio"),
             rs.getInt("ano_modelo"),
             rs.getInt("ano_fabricacao"),
-            modelo // Modelo associado
+            modelo 
         );
     }
 }

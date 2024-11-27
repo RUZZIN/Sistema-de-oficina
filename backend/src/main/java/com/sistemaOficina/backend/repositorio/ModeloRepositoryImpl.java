@@ -13,9 +13,11 @@ import java.util.List;
 public class ModeloRepositoryImpl implements ModeloRepository {
 
     private final DataSource dataSource;
+    private final MarcaRepositoryImpl marcaRepositoryImpl;
 
-    public ModeloRepositoryImpl(DataSource dataSource) {
+    public ModeloRepositoryImpl(DataSource dataSource, MarcaRepositoryImpl marcaRepositoryImpl) {
         this.dataSource = dataSource;
+        this.marcaRepositoryImpl = marcaRepositoryImpl;
     }
 
     private Connection getConnection() throws SQLException {
@@ -89,7 +91,7 @@ public class ModeloRepositoryImpl implements ModeloRepository {
     }
 
     private Modelo mapResultSetToModelo(ResultSet rs) throws SQLException {
-        Marca marca = new Marca(rs.getInt("id_marca")); // Marca apenas com ID
+        Marca marca = marcaRepositoryImpl.buscarPorId(rs.getLong("id_marca"));
         return new Modelo(
                 rs.getLong("id"),
                 rs.getString("nome"),
