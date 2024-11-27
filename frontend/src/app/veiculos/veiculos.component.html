@@ -1,1 +1,126 @@
-<p>veiculos works!</p>
+<div class="card">
+    <p-toast></p-toast>
+    <p-toolbar styleClass="mb-4 gap-2">
+      <ng-template pTemplate="left">
+        <p-button
+          severity="success"
+          label="Novo"
+          icon="pi pi-plus"
+          class="mr-2"
+          (onClick)="openNew()"
+        ></p-button>
+        <p-button
+          severity="danger"
+          label="Excluir"
+          icon="pi pi-trash"
+          (onClick)="deleteSelectedPecas()"
+          [disabled]="!selectedPecas || !selectedPecas.length"
+        ></p-button>
+      </ng-template>
+    </p-toolbar>
+  
+    <p-table
+      #dt
+      [value]="pecas"
+      [rows]="10"
+      [paginator]="true"
+      [globalFilterFields]="['nome', 'codigo']"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [(selection)]="selectedPecas"
+      dataKey="id"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Nome</th>
+          <th>Código</th>
+          <th>Preço</th>
+          <th>Quantidade</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-peca>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="peca"></p-tableCheckbox>
+          </td>
+          <td>{{ peca.nome }}</td>
+          <td>{{ peca.codigo }}</td>
+          <td>{{ peca.precoUnitario | currency : 'BRL' }}</td>
+          <td>{{ peca.quantidade }}</td>
+          <td>
+            <p-button
+              icon="pi pi-pencil"
+              severity="success"
+              [rounded]="true"
+              (onClick)="editPeca(peca)"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              (onClick)="deletePeca(peca)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  
+    <p-dialog
+      [(visible)]="pecaDialog"
+      [style]="{ width: '450px' }"
+      header="Detalhes da Peça"
+      [modal]="true"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input
+            type="text"
+            pInputText
+            id="nome"
+            [(ngModel)]="peca.nome"
+            required
+            autofocus
+          />
+          <small class="p-error" *ngIf="submitted && !peca.nome">
+            Nome é obrigatório.
+          </small>
+        </div>
+        <div class="field">
+          <label for="codigo">Código</label>
+          <input
+            type="text"
+            pInputText
+            id="codigo"
+            [(ngModel)]="peca.codigo"
+            required
+          />
+        </div>
+        <div class="formgrid grid">
+          <div class="field col">
+            <label for="preco">Preço</label>
+            <p-inputNumber
+              id="preco"
+              [(ngModel)]="peca.precoUnitario"
+              mode="currency"
+              currency="BRL"
+              locale="pt-BR"
+            ></p-inputNumber>
+          </div>
+          <div class="field col">
+            <label for="quantidade">Quantidade</label>
+            <p-inputNumber id="quantidade" [(ngModel)]="peca.quantidade"></p-inputNumber>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <p-button label="Cancelar" icon="pi pi-times" (onClick)="hideDialog()"></p-button>
+        <p-button label="Salvar" icon="pi pi-check" (onClick)="savePeca()"></p-button>
+      </ng-template>
+    </p-dialog>
+  </div>
+  
+  <p-confirmDialog></p-confirmDialog>
