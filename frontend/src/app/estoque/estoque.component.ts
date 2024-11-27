@@ -90,7 +90,7 @@ export class EstoqueComponent implements OnInit {
           if (deleteRequests.length > 0) {
             forkJoin(deleteRequests).subscribe({
               next: () => {
-                this.loadPecas(); // Recarrega as peças após a exclusão
+                this.loadPecas(); 
                 this.selectedPecas = null;
                 this.messageService.add({
                   severity: 'success',

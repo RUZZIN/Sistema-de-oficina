@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class OrdemServicoRequest {
     private String placaVeiculo;
-    private List<ItensPeca> itensPeca;   // Lista de itens de peças
-    private List<ItensServico> itensServico; // Lista de itens de serviços
+    private List<ItensPeca> itensPeca;
+    private List<ItensServico> itensServico; 
 }

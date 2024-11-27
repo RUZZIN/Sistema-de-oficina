@@ -1,1 +1,85 @@
-<p>os works!</p>
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <p-button severity="success" label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"></p-button>
+        <p-button severity="danger" label="Excluir" icon="pi pi-trash" (onClick)="deleteSelectedOss()"
+            [disabled]="!selectedOss || !selectedOss.length"></p-button>
+    </ng-template>
+</p-toolbar>
+<p-table #dt [value]="oss" [(selection)]="selectedOss" dataKey="numero" [paginator]="true" [rows]="10"
+    [globalFilterFields]="['placaVeiculo', 'status']" [rowHover]="true">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="numero">Número</th>
+            <th pSortableColumn="placaVeiculo">Placa</th>
+            <th pSortableColumn="precoFinal">Preço</th>
+            <th pSortableColumn="status">Status</th>
+            <th>Ações</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-os>
+        <tr>
+            <td>
+                <p-tableCheckbox [value]="os"></p-tableCheckbox>
+            </td>
+            <td>{{ os.numero }}</td>
+            <td>{{ os.placaVeiculo }}</td>
+            <td>{{ os.precoFinal | currency: 'BRL' }}</td>
+            <td>
+                <p-tag [value]="os.status"></p-tag>
+            </td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" (onClick)="editOs(os)"></p-button>
+                <p-button icon="pi pi-trash" (onClick)="deleteOs(os)"></p-button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="ordemServicoDialog" [style]="{ width: '800' }" header="Detalhes da Ordem de Serviço"
+    [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="placaVeiculo">Placa do Veículo</label>
+                <p-dropdown 
+                [options]="veiculos" 
+                [(ngModel)]="selectedVeiculo" 
+                optionLabel="placa" 
+                [filter]="true" 
+                filterBy="placa" appendTo="body"
+                [showClear]="true" 
+                placeholder="Selecione um Veículo">
+                <ng-template let-veiculo pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div>{{ veiculo.placa }}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <div class="field">
+            <label for="status">Status</label>
+            <p-dropdown 
+                [options]="statusOptions" 
+                [(ngModel)]="ordemServico.status" 
+                optionLabel="label"  appendTo="body"
+                optionValue="value" 
+                placeholder="Selecione o status" 
+                
+                required>
+            </p-dropdown>
+        </div>
+        
+        <div class="field">
+            <label for="precoFinal">Preço Final</label>
+            <p-inputNumber id="precoFinal" [(ngModel)]="ordemServico.precoFinal" mode="currency" currency="BRL"
+                locale="pt-BR"></p-inputNumber>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancelar" icon="pi pi-times" (onClick)="hideDialog()"></p-button>
+        <p-button label="Salvar" icon="pi pi-check" (onClick)="saveOs()"></p-button>
+    </ng-template>
+</p-dialog>
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
