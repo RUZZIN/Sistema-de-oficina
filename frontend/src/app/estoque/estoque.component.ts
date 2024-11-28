@@ -143,7 +143,7 @@ export class EstoqueComponent implements OnInit {
             }
         }
     });
-  }
+}
 
   hideDialog() {
     this.pecaDialog = false;
