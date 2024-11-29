@@ -1,3 +1,5 @@
+import { Modelo } from "./Modelo";
+
 export class Veiculo {
   id?: number;
   placa?: string;
@@ -6,4 +8,5 @@ export class Veiculo {
   patrimonio?: string;
   anoModelo?: number;
   anoFabricacao?: number;
+  idModelo?: Modelo;
 }

@@ -1,0 +1,66 @@
+.pecas-container {
+  display: grid;
+  grid-template-columns: 200px 100px 30px; /* 200px para o dropdown, 100px para o campo de número e 30px para o botão */
+  gap: 10px;
+  align-items: center; /* Alinha os itens verticalmente */
+}
+
+.peca-dropdown-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.quantidade-input-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centraliza verticalmente o botão de +/- com o número */
+}
+
+.remove-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+.quantidade-input-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.quantidade-input {
+  width: 50px; /* Tamanho pequeno */
+  height: 50px; /* Altura do input */
+  font-size: 16px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  margin-right: 5px; /* Pequeno espaçamento à direita */
+  box-sizing: border-box;
+}
+
+/* Estilos das cores específicas */
+.orange {
+  background-color: orange !important;
+  color: black !important; /* Texto preto para fundo claro */
+}
+
+.blue {
+  background-color: blue !important;
+  color: white !important; /* Texto branco para fundo escuro */
+}
+
+.yellow {
+  background-color: yellow !important;
+  color: black !important; /* Texto preto para fundo claro */
+}
+
+.green {
+  background-color: green !important;
+  color: white !important; /* Texto branco para fundo escuro */
+}
+
+.gray {
+  background-color: gray !important;
+  color: white !important; /* Texto branco para fundo escuro */
+}

@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrdemServicoRequest {
     private String placaVeiculo;
+    private String status;
     private List<ItensPeca> itensPeca;
     private List<ItensServico> itensServico; 
 }

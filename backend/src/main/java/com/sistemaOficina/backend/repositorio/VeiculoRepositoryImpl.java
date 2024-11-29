@@ -110,7 +110,6 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
         // Mapeia os resultados para a entidade Veiculo
         Long idModelo = rs.getLong("id_modelo");
         Modelo modelo = modeloRepositoryImpl.buscarPorId(idModelo);
-System.err.println("aqui: " + modelo);
         return new Veiculo(
             rs.getString("placa"),
             rs.getInt("quilometragem"),

@@ -17,6 +17,6 @@ public class OrdemServico {
     private LocalDate data; 
     private double precoFinal;
     private String status;
-    private String placaVeiculo; 
+    private Veiculo placaVeiculo; 
 
 }
