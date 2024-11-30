@@ -20,7 +20,7 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { forkJoin } from 'rxjs';
-import { VeiculoService } from '../../services/VeiculoService.service';
+import { VeiculoService } from '../../services/veiculo.service';
 import { Veiculo } from '../models/Veiculo';
 
 @Component({

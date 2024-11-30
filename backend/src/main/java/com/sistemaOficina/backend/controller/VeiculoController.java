@@ -28,8 +28,9 @@ public class VeiculoController {
     // Método para atualizar um veículo (PUT)
     @PutMapping("/{placa}")
     public void atualizar(@PathVariable String placa, @RequestBody Veiculo veiculo) {
-        veiculo.setPlaca(placa); // Garantir que a placa no path é usada para atualização
-        veiculoRepository.atualizar(veiculo);
+    	System.out.println("veiculo atualizar: "+veiculo.toString());
+    	System.out.println("placa: "+placa);
+        veiculoRepository.atualizar(placa,veiculo);
     }
 
     // Método para deletar um veículo (DELETE)
