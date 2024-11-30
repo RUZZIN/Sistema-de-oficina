@@ -45,10 +45,12 @@ public void salvar(ItensPeca itensPeca) {
     @Override
     public void atualizar(ItensPeca itensPeca) {
         String sql = "UPDATE itens_peca SET preco_total = ?, quantidade = ?, numero_os = ?, id_peca = ? WHERE id = ?";
+
+        System.err.println("bbbbbbbbbbbbb"+itensPeca);
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setDouble(1, itensPeca.getPrecoTotal());  // Preço total
             stmt.setInt(2, itensPeca.getQuantidade());     // Quantidade
-            stmt.setLong(3, itensPeca.getNumeroOs().getNumero()); // Número da Ordem de Serviço
+            stmt.setLong(3, itensPeca.getNumeroOs().getNumero());  // Atualizando com numero_os
             stmt.setLong(4, itensPeca.getIdPeca().getId()); // ID da peça
             stmt.setInt(5, itensPeca.getId());             // ID do Item de Peça
             stmt.executeUpdate();
@@ -79,8 +81,8 @@ public void salvar(ItensPeca itensPeca) {
                     rs.getInt("id"),
                     rs.getDouble("preco_total"),
                     rs.getInt("quantidade"),
-                    new OrdemServico(rs.getInt("numero_os")),  // Construção da OrdemServico
-                    new Pecas(rs.getLong("id_peca"))             // Construção da Pecas
+                    ordemServicoRepositoryImpl.buscarPorId(rs.getLong("numero_os")),  // Construção da OrdemServico
+                    pecasRepository.buscarPorId(rs.getLong("id_peca"))             // Construção da Pecas
                 );
             }
         } catch (Exception e) {
@@ -100,8 +102,8 @@ public void salvar(ItensPeca itensPeca) {
                     rs.getInt("id"),
                     rs.getDouble("preco_total"),
                     rs.getInt("quantidade"),
-                    new OrdemServico(rs.getInt("numero_os")),  // OrdemServico
-                    new Pecas(rs.getLong("id_peca"))             // Pecas
+                    ordemServicoRepositoryImpl.buscarPorId(rs.getLong("numero_os")),  // Construção da OrdemServico
+                    pecasRepository.buscarPorId(rs.getLong("id_peca"))              // Pecas
                 ));
             }
         } catch (Exception e) {

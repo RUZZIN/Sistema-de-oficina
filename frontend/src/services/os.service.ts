@@ -36,6 +36,11 @@ export class OsService {
     return this.httpClient.post<OrdemServico>(this.apiUrl, os, this.httpOptions);
   }
 
+  salvarAlteracoes(numero: number, os: OrdemServico): Observable<OrdemServico> {
+    const url = `${this.apiUrl}/${numero}`; // Adicionar o número na URL
+    return this.httpClient.put<OrdemServico>(url, os, this.httpOptions);
+  }
+  
   // Método para atualizar uma ordem de serviço existente
   updateOs(id: number, os: OrdemServico): Observable<OrdemServico> {
     return this.httpClient.put<OrdemServico>(`${this.apiUrl}/${id}`, os, this.httpOptions);

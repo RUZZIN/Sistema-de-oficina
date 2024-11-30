@@ -139,6 +139,118 @@ public class OrdemServicoController {
         ordemServicoRepository.atualizar(ordemServico);
     }
     
+    @PutMapping("/{numero}")
+    @Transactional
+    public void salvarAlteracao(@PathVariable Long numero, @RequestBody OrdemServicoRequest request) {
+        double precoTotal = 0;
+    
+        // Verificar se a Ordem de Serviço existe
+        OrdemServico ordemServico = ordemServicoRepository.buscarPorId(numero);
+        System.err.println("aaaaaaaaaaaa"+ordemServico);
+        if (ordemServico == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ordem de serviço não encontrada");
+        }
+    
+        // Atualizar os detalhes da Ordem de Serviço
+        Veiculo veiculo = veiculoRepository.buscarPorPlaca(request.getPlacaVeiculo());
+        if (veiculo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado");
+        }
+        ordemServico.setStatus(request.getStatus());
+        ordemServico.setPlacaVeiculo(veiculo);
+    
+        // Atualizar Itens de Peças
+        for (ItensPeca itensPecaRequest : request.getItensPeca()) {
+            Pecas peca = pecasRepository.buscarPorId(itensPecaRequest.getIdPeca().getId());
+            if (peca == null) {
+                System.out.println("DEBUG: Peça não encontrada - ID: " + itensPecaRequest.getIdPeca().getId());
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Peça não encontrada");
+            }
+            
+            
+            // Recuperar a quantidade previamente usada na OS (se existir)
+            int quantidadeAnterior = ordemServicoRepositoryImpl.buscarQuantidadePorPecaEOrdemServico(
+                ordemServico.getNumero(),
+                itensPecaRequest.getIdPeca().getId()
+            );
+            
+            // Calcular a diferença real
+            int diferenca = itensPecaRequest.getQuantidade() - quantidadeAnterior;
+            
+            // Verificar se há estoque suficiente para a alteração
+            if (diferenca > 0 && peca.getQuantidade() < diferenca) {
+                System.out.println("DEBUG: Estoque insuficiente - Quantidade em Estoque: " + peca.getQuantidade() + ", Diferença Necessária: " + diferenca);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estoque insuficiente para a peça");
+            }
+            
+            // Atualizar o estoque com base na diferença
+            peca.setQuantidade(peca.getQuantidade() - diferenca);
+            pecasRepository.atualizar(peca);
+            
+            double precoPecaTotal = itensPecaRequest.getQuantidade() * peca.getPrecoUnitario();
+            precoTotal += precoPecaTotal;
+    
+            // Atualizar ou criar Item de Peça
+            ItensPeca itensPeca = itensPecaRepository.buscarPorId(itensPecaRequest.getId());
+            System.out.println("DEBUG: Ordem de Serviço - Número: " + ordemServico.getNumero());
+
+            if (itensPeca == null) {
+                System.err.println("entrrou no if");
+                itensPeca = new ItensPeca(
+                        0,
+                        precoPecaTotal,
+                        itensPecaRequest.getQuantidade(),
+                        ordemServico,
+                        peca
+                );
+                
+                itensPecaRepository.salvar(itensPeca);
+            } else {
+                itensPeca.setQuantidade(itensPecaRequest.getQuantidade());
+                itensPeca.setPrecoTotal(precoPecaTotal);
+                itensPecaRepository.atualizar(itensPeca);
+            }
+        }
+    
+        // Atualizar Itens de Serviços
+        for (ItensServico itensServicoRequest : request.getItensServico()) {
+            Servico servico = servicoRepository.buscarPorId(itensServicoRequest.getIdServico().getId());
+            Funcionario funcionario = funcionarioRepository.buscarPorId(itensServicoRequest.getIdFuncionario().getId());
+            if (servico == null || funcionario == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Serviço ou Funcionário não encontrado");
+            }
+    
+            double precoServicoTotal = itensServicoRequest.getQuantidade() * servico.getPrecoUnitario();
+            precoTotal += precoServicoTotal;
+    
+            // Atualizar ou criar Item de Serviço
+            ItensServico itensServico = itensServicoRepositoryImpl.buscarPorId(itensServicoRequest.getId());
+            if (itensServico == null) {
+                itensServico = new ItensServico(
+                        0,
+                        itensServicoRequest.getHorarioInicio(),
+                        itensServicoRequest.getHorarioFim(),
+                        itensServicoRequest.getQuantidade(),
+                        precoServicoTotal,
+                        funcionario,
+                        servico,
+                        ordemServico
+                );
+                itensServicoRepositoryImpl.salvar(itensServico);
+            } else {
+                itensServico.setHorarioInicio(itensServicoRequest.getHorarioInicio());
+                itensServico.setHorarioFim(itensServicoRequest.getHorarioFim());
+                itensServico.setQuantidade(itensServicoRequest.getQuantidade());
+                itensServico.setPrecoTotal(precoServicoTotal);
+                itensServicoRepositoryImpl.atualizar(itensServico);
+            }
+        }
+    
+        // Atualizar o preço total da Ordem de Serviço
+        ordemServico.setPrecoFinal(precoTotal);
+        ordemServicoRepository.atualizar(ordemServico);
+    }
+    
 
     @GetMapping("/{id}")
     public OrdemServico buscarPorId(@PathVariable Long id) {

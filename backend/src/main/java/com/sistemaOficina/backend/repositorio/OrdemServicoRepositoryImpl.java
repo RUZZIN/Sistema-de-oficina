@@ -51,7 +51,6 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
     public void salvar(OrdemServico ordemServico) {
         String sql = "INSERT INTO ordem_servico (data, preco_final, status, placa_veiculo) VALUES (?, ?, ?, ?)";
     
-        System.err.println("aqui----------" + ordemServico.getPlacaVeiculo().getPlaca());
     
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -59,7 +58,7 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
             statement.setDate(1, Date.valueOf(ordemServico.getData()));
             statement.setDouble(2, ordemServico.getPrecoFinal());
             statement.setString(3, ordemServico.getStatus());
-            statement.setString(4, ordemServico.getPlacaVeiculo().getPlaca()); // Usa a placa diretamente como FK
+            statement.setString(4, ordemServico.getPlacaVeiculo().getPlaca());
 
     
             statement.executeUpdate();
@@ -89,6 +88,29 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
             throw new RuntimeException("Erro ao atualizar ordem de serviço", e);
         }
     }
+
+    public int buscarQuantidadePorPecaEOrdemServico(Long numeroOrdemServico, Long idPeca) {
+        String sql = "SELECT quantidade FROM itens_peca WHERE numero_os = ? AND id_peca = ?";
+        
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            
+            statement.setLong(1, numeroOrdemServico);
+            statement.setLong(2, idPeca);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("quantidade");
+                } else {
+                    return 0; // Retorna 0 se não houver registro para essa peça na OS
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar quantidade da peça na ordem de serviço", e);
+        }
+    }
+    
 
     @Override
     public void deletar(Long id) {

@@ -31,6 +31,7 @@ import { OrdemServicoRequest } from '../../services/OrdemServicoRequest';
 import { ItensPeca } from '../models/ItensPeca';
 import { ItensServico } from '../models/ItensServico';
 import { Peca } from '../models/Peca';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-ordem-servico',
@@ -62,6 +63,8 @@ import { Peca } from '../models/Peca';
 export class OsComponent implements OnInit {
   oss: OrdemServico[] = [];
   ordemServicoDialog: boolean = false;
+  ordemServicoDialogEditar: boolean = false;
+
   ordemServico: OrdemServico = {};
   selectedVeiculo: Veiculo | undefined;
   selectedServico: Servico | undefined;
@@ -192,16 +195,25 @@ export class OsComponent implements OnInit {
       });
       this.hideDialog();
     });
+    this.loadOss()
   }
 
-  editOs(ordemServico: OrdemServico) {
+  editOs(ordemServico: OrdemServico, placa: String) {
     this.ordemServico = { ...ordemServico };
-  
-    // Carregar o veículo selecionado
-    this.selectedVeiculo = this.veiculos.find(
-      (veiculo) => veiculo.placa === this.ordemServico.placaVeiculo
-    );
-  
+    console.log("-------------"+placa)
+     
+      this.veiculoService.getVeiculoById(placa).subscribe(
+        (veiculoData: Veiculo) => {
+          this.selectedVeiculo = veiculoData;
+          console.log("Veículo selecionado:", this.selectedVeiculo);
+        },
+        (error) => {
+          console.error("Erro ao buscar veículo:", error);
+        }
+      );
+    
+    
+
     // Carregar os itens de peça da ordem de serviço
     if (this.ordemServico.numero) {
       this.osService.getItensPecaByOs(this.ordemServico.numero).subscribe((data) => {
@@ -229,22 +241,63 @@ export class OsComponent implements OnInit {
           precoTotal: item.precoTotal,
           numeroOs: item.numeroOs
         }));
-        console.log(this.itensServico);
-
       });
     }
     
 
     this.calcularTotal();
     // Abrir o diálogo para edição
-    this.ordemServicoDialog = true;
+    this.ordemServicoDialogEditar = true;
   }
+  saveEdicao() {
+    // Construir o payload para envio
+    const requestPayload = {
+      numero: this.ordemServico.numero, // Adicionar o número da OS
+      status: this.ordemServico.status,
+      placaVeiculo: this.selectedVeiculo?.placa,
   
+      itensPeca: this.itensPeca.map((item) => ({
+        id: item.id, // Incluir o ID do item para atualização
+        quantidade: item.quantidade,
+        idPeca: { id: item.idPeca.id }, // Estrutura correta para o backend
+      })),
+      itensServico: this.itensServico.map((item) => ({
+        id: item.id, // Incluir o ID do item para atualização
+        horarioInicio: item.horarioInicio,
+        horarioFim: item.horarioFim,
+        quantidade: item.quantidade,
+        idFuncionario: { id: item.idFuncionario.id }, // Estrutura correta para o backend
+        idServico: { id: item.idServico.id }, // Estrutura correta para o backend
+      })),
+    };
   
+    // Chamar o serviço para salvar alterações
+    if (this.ordemServico.numero === undefined) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Número da Ordem de Serviço não encontrado',
+      });
+      return;
+    }
+
+    this.osService
+      .salvarAlteracoes(this.ordemServico.numero, requestPayload)
+      .subscribe(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Ordem de Serviço atualizada com sucesso!',
+        });
+        this.hideDialog();
+      });
+      this.loadOss();
+  }
   
 
   hideDialog() {
     this.ordemServicoDialog = false;
+    this.ordemServicoDialogEditar = false;
   }
 
   addItemPeca() {

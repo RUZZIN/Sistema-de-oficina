@@ -17,7 +17,7 @@ export class VeiculoService {
   }
 
   // Método para obter um veículo pelo ID
-  getVeiculoById(id: number): Observable<Veiculo> {
+  getVeiculoById(id: String): Observable<Veiculo> {
     return this.httpClient.get<Veiculo>(`${this.apiUrl}/${id}`);
   }
 

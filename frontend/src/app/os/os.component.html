@@ -1,17 +1,15 @@
 <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
         <p-button severity="success" label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"></p-button>
-        <p-button severity="danger" label="Excluir" icon="pi pi-trash" (onClick)="deleteSelectedOss()"
-            [disabled]="!selectedOss || !selectedOss.length"></p-button>
+        
     </ng-template>
 </p-toolbar>
 <p-table #dt [value]="oss" [(selection)]="selectedOss" dataKey="numero" [globalFilterFields]="['idModelo', 'status']"
-    [rowHover]="true">
+    [rowHover]="true" [rows]="15" [paginator]="true" [rowsPerPageOptions]="[10, 15, 25]">
+
     <ng-template pTemplate="header">
         <tr>
-            <th>
-                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-            </th>
+          
             <th pSortableColumn="numero">Número</th>
             <th pSortableColumn="idModelo">Modelo</th>
             <th pSortableColumn="placaVeiculo">Placa</th>
@@ -22,9 +20,6 @@
     </ng-template>
     <ng-template pTemplate="body" let-os>
         <tr>
-            <td>
-                <p-tableCheckbox [value]="os"></p-tableCheckbox>
-            </td>
             <td>{{ os.numero }}</td>
             <td>{{ os.placaVeiculo.idModelo.nome }}</td>
             <td>{{ os.placaVeiculo.placa }}</td>
@@ -46,8 +41,7 @@
             </td>
 
             <td>
-                <p-button icon="pi pi-pencil" class="mr-2" (onClick)="editOs(os)"></p-button>
-                <p-button severity="danger" icon="pi pi-trash" (onClick)="deleteOs(os)"></p-button>
+                <p-button icon="pi pi-pencil" class="mr-2" (onClick)="editOs(os,os.placaVeiculo.placa)"></p-button>
             </td>
         </tr>
     </ng-template>
@@ -79,10 +73,7 @@
               <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" />
             </div>
           
-            <div class="remove-button-container">
-              <button pButton icon="pi pi-trash" class="p-button-text peca-button" (click)="removeItemPeca(item)">
-              </button>
-            </div>
+            
           </div>
           
         <br />
@@ -148,7 +139,97 @@
     </ng-template>
 </p-dialog>
 
+<p-dialog [(visible)]="ordemServicoDialogEditar" header="Detalhes da Ordem de Serviço" [modal]="true"
+    [style]="{ width: '60vw' }">
+    <div class="field">
+        <label for="placaVeiculo"><b>VEÍCULO</b></label> <br />
+        <p-dropdown [options]="veiculos" [(ngModel)]="selectedVeiculo" optionLabel="idModelo.nome"
+            placeholder="Selecione um Veículo">
+        </p-dropdown>
+    </div>
+    <br />
+    <div class="">
+        <label for="itensPeca"><b>PEÇAS USADAS</b></label>
+        <div class="pecas-container" *ngFor="let item of itensPeca">
+            <div class="peca-dropdown-container">
+              <p-dropdown 
+                [options]="pecas" 
+                optionLabel="nome" 
+                placeholder="Selecione uma Peça" 
+                styleClass="peca-dropdown" 
+                [(ngModel)]="item.idPeca">
+              </p-dropdown>
+            </div>
+          
+            <div class="quantidade-input-container">
+              <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" />
+            </div>
+          
+            
+          </div>
+          
+        <br />
+        <button pButton label="Adicionar Peça" icon="pi pi-plus" class="p-button-text add-peca-button"
+            (click)="addItemPeca()">
+        </button>
+    </div>
 
+    <br />
+    <div class="field">
+        <label for="itensServico"><b>SERVIÇOS CONTRATADOS</b></label>
+        <div class="flex flex-column gap-2">
+            <div class="servicos-container" *ngFor="let item of itensServico">
+                  <p-dropdown 
+                    [options]="servicos" 
+                    optionLabel="nome" 
+                    placeholder="Selecione um Serviço" 
+                    styleClass="servico-dropdown" 
+                    [(ngModel)]="item.idServico">
+                  </p-dropdown>
+              
+                  <p-dropdown 
+                    [options]="funcionarios" 
+                    optionLabel="nome" 
+                    placeholder="Selecione um Funcionário" 
+                    styleClass="funcionario-dropdown" 
+                    [(ngModel)]="item.idFuncionario">
+                  </p-dropdown>
+              
+
+                    <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" /><br/>
+                    Inicio
+                <input type="time" [(ngModel)]="item.horarioInicio" class="" />
+                Fim
+                <input type="time" [(ngModel)]="item.horarioFim" class="" />
+            
+                <div class="remove-button-container">
+                  <button pButton icon="pi pi-trash" class="p-button-text" (click)="removeItemServico(item)">
+                  </button>
+                </div>
+              </div>
+               <br />
+            <button pButton label="Adicionar Serviço" icon="pi pi-plus" class="p-button-text"
+                (click)="addItemServico()"></button>
+        </div>
+    </div>
+    <br />
+    <div class="field">
+        <label for="status"><b>Status</b></label><br />
+        <p-dropdown [options]="statusOptions" [(ngModel)]="ordemServico.status" placeholder="Selecione o status">
+        </p-dropdown>
+    </div>
+    <br />
+    <div class="field">
+        <label for="precoFinal"><b>Preço Final: </b></label>
+        <label for="precoFinal">{{ calcularTotal() | currency }}</label>
+    </div>
+
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cancelar" icon="pi pi-times" (click)="hideDialog()"></p-button>
+        <p-button label="Salvar" icon="pi pi-check" (click)="saveEdicao()"></p-button>
+    </ng-template>
+</p-dialog>
 
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast>
