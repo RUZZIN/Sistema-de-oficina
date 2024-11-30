@@ -29,12 +29,14 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     public void salvar(Veiculo veiculo) {
         String sql = "INSERT INTO veiculo (placa, quilometragem, chassi, patrimonio, ano_modelo, ano_fabricacao, id_modelo) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
+        	System.out.println("Veiculo: "+veiculo.toString());
             stmt.setString(1, veiculo.getPlaca());
             stmt.setInt(2, veiculo.getQuilometragem());
             stmt.setString(3, veiculo.getChassi());
             stmt.setString(4, veiculo.getPatrimonio());
             stmt.setInt(5, veiculo.getAnoModelo());
             stmt.setInt(6, veiculo.getAnoFabricacao());
+            System.out.println("IDmodelo: "+veiculo.getIdModelo());
             stmt.setLong(7, veiculo.getIdModelo().getId()); 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -43,9 +45,11 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     }
 
     @Override
-    public void atualizar(Veiculo veiculo) {
+    public void atualizar(String placaAntiga, Veiculo veiculo) {
+    	System.out.println("Placa antiga: "+placaAntiga);
         String sql = "UPDATE veiculo SET placa = ?, quilometragem = ?, chassi = ?, patrimonio = ?, ano_modelo = ?, ano_fabricacao = ?, id_modelo = ? WHERE placa = ?";
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
+        	System.out.println("Veiculo atualização: "+veiculo.toString());
             stmt.setString(1, veiculo.getPlaca());
             stmt.setInt(2, veiculo.getQuilometragem());
             stmt.setString(3, veiculo.getChassi());
@@ -53,7 +57,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
             stmt.setInt(5, veiculo.getAnoModelo());
             stmt.setInt(6, veiculo.getAnoFabricacao());
             stmt.setLong(7, veiculo.getIdModelo().getId());  // ID do Modelo
-            stmt.setString(8, veiculo.getPlaca());  // Placa para atualização
+            stmt.setString(8, placaAntiga); // Placa original para a cláusula WHERE
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -110,7 +114,6 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
         // Mapeia os resultados para a entidade Veiculo
         Long idModelo = rs.getLong("id_modelo");
         Modelo modelo = modeloRepositoryImpl.buscarPorId(idModelo);
-System.err.println("aqui: " + modelo);
         return new Veiculo(
             rs.getString("placa"),
             rs.getInt("quilometragem"),

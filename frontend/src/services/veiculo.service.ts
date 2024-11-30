@@ -18,7 +18,7 @@ export class VeiculoService {
   }
 
   // Método para obter um veículo pelo ID
-  getVeiculoById(id: number): Observable<Veiculo> {
+  getVeiculoById(id: string): Observable<Veiculo> {
     return this.httpClient.get<Veiculo>(`${this.apiUrl}/${id}`);
   }
 
@@ -28,12 +28,12 @@ export class VeiculoService {
   }
 
   // Método para atualizar um veículo existente
-  updateVeiculo(id: number, veiculo: Veiculo): Observable<Veiculo> {
+  updateVeiculo(id: string, veiculo: Veiculo): Observable<Veiculo> {
     return this.httpClient.put<Veiculo>(`${this.apiUrl}/${id}`, veiculo);
   }
 
   // Método para deletar um veículo pelo ID
-  deleteVeiculo(id: number): Observable<void> {
+  deleteVeiculo(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

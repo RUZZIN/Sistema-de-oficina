@@ -94,7 +94,7 @@ import { MarcaService } from '../../services/marca.service';
         <td>{{ veiculo.patrimonio }}</td>
         <td>
           <button (click)="editVeiculo(veiculo)">Editar</button>
-          <button (click)="deleteVeiculo(veiculo.id!)">Deletar</button>
+          <button (click)="deleteVeiculo(veiculo.placa!)">Deletar</button>
         </td>
       </tr>
     </tbody>
@@ -110,7 +110,7 @@ export class VeiculoComponent implements OnInit {
   marcas: Marca[] = [];
   veiculoForm: FormGroup;
   editMode = false;
-  selectedVeiculoId?: number;
+  selectedVeiculoId?: string;
 
   constructor(
     private veiculoService: VeiculoService,
@@ -119,7 +119,6 @@ export class VeiculoComponent implements OnInit {
     private formBuilder: FormBuilder
   ) {
     this.veiculoForm = this.formBuilder.group({
-      id: [''],
       placa: [''],
       modelo: [''],
       marca: [''],
@@ -129,7 +128,7 @@ export class VeiculoComponent implements OnInit {
       anoModelo: [0],
       anoFabricacao: [0],
     });
-  }
+  } 
 
   ngOnInit(): void {
     this.loadVeiculos();
@@ -165,7 +164,12 @@ export class VeiculoComponent implements OnInit {
 
   // Salvar ou atualizar veículo
   saveVeiculo(): void {
-    const veiculo: Veiculo = this.veiculoForm.value;
+    const veiculoFormValue = this.veiculoForm.value;
+
+    const veiculo: Veiculo = {
+      ...veiculoFormValue,
+      idModelo: { id: veiculoFormValue.modelo }, // Associa o ID selecionado ao objeto `idModelo`
+    };
 
     if (this.editMode) {
       this.veiculoService.updateVeiculo(this.selectedVeiculoId!, veiculo).subscribe({
@@ -189,7 +193,7 @@ export class VeiculoComponent implements OnInit {
   // Editar veículo
   editVeiculo(veiculo: Veiculo): void {
     this.editMode = true;
-    this.selectedVeiculoId = veiculo.id;
+    this.selectedVeiculoId = veiculo.placa;
     this.veiculoForm.patchValue({
       ...veiculo,
       modelo: veiculo.idModelo?.id,
@@ -198,7 +202,7 @@ export class VeiculoComponent implements OnInit {
   }
 
   // Deletar veículo
-  deleteVeiculo(id: number): void {
+  deleteVeiculo(id: string): void {
     this.veiculoService.deleteVeiculo(id).subscribe({
       next: () => this.loadVeiculos(),
       error: (err) => console.error('Erro ao deletar veículo:', err),
