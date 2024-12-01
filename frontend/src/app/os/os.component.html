@@ -9,7 +9,6 @@
 
   <ng-template pTemplate="header">
     <tr>
-
       <th pSortableColumn="numero">Número</th>
       <th pSortableColumn="idModelo">Modelo</th>
       <th pSortableColumn="placaVeiculo">Placa</th>
@@ -18,6 +17,7 @@
       <th>Ações</th>
     </tr>
   </ng-template>
+
   <ng-template pTemplate="body" let-os>
     <tr>
       <td>{{ os.numero }}</td>
@@ -42,10 +42,13 @@
 
       <td>
         <p-button icon="pi pi-pencil" class="mr-2" (onClick)="editOs(os,os.placaVeiculo.placa)"></p-button>
+        <p-button label="Gerar Orçamento" icon="pi pi-file-pdf" class="p-button-success" (onClick)="generatePdf(os,os.placaVeiculo.placa)"></p-button>
       </td>
     </tr>
   </ng-template>
+
 </p-table>
+
 
 <p-dialog [(visible)]="ordemServicoDialog" header="Detalhes da Ordem de Serviço" [modal]="true"
   [style]="{ width: '60vw' }">
