@@ -120,7 +120,7 @@ export class EstoqueComponent implements OnInit {
       },
     });
   }
-  
+
 
   editPeca(peca: Peca) {
     this.peca = { ...peca };
@@ -151,7 +151,7 @@ export class EstoqueComponent implements OnInit {
   }
 
   savePeca() {
-    this.submitted = true;
+    this.submitted = true; 
 
     if (this.peca.nome?.trim()) {
       if (this.peca.id) {

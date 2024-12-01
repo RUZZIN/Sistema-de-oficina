@@ -1,0 +1,72 @@
+/* Container de Grid para os campos de telefone */
+.telefone-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colunas iguais */
+  gap: 1rem; /* Espaçamento entre os campos */
+}
+
+/* DDI e DDD ocupam 1 coluna cada */
+.telefone-grid .field {
+  grid-column: span 1;
+}
+
+/* Número ocupa 2 colunas */
+.telefone-grid .numero1,
+.telefone-grid .numero2 {
+  grid-column: span 2; /* Ocupa 2 colunas */
+}
+
+/* Ajuste de z-index para o dialogo */
+.p-dialog {
+  z-index: 9999 !important; /* Ajuste o z-index se necessário */
+}
+
+/* Alinhamento geral e margens dos campos */
+.p-field {
+  margin-bottom: 1.5rem; /* Espaço entre os campos */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels dos campos */
+.p-field label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo do input */
+.p-inputtext {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Estilo do p-dropdown */
+.p-dropdown {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Responsividade - Ajustes para telas pequenas */
+@media (max-width: 600px) {
+
+  .p-inputtext,
+  .p-dropdown {
+    font-size: 0.9rem; /* Diminui o tamanho da fonte para dispositivos menores */
+  }
+
+  /* Ajuste no container de grid para os campos de telefone */
+  .telefone-grid {
+    grid-template-columns: 1fr 1fr; /* Reduz o número de colunas em telas menores */
+  }
+
+  /* Garantir que os campos de telefone ocupem toda a largura da tela */
+  .telefone-grid .numero1,
+  .telefone-grid .numero2 {
+    grid-column: span 1; /* Ocupa uma coluna */
+  }
+}
