@@ -1,5 +1,8 @@
 package com.sistemaOficina.backend.entidade;
 import lombok.Data;
+
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 
 @Data
@@ -11,5 +14,15 @@ public class Funcionario {
     }
     private Long id;
     private String nome;
-    
+    private String salario;
+    private LocalDate dataNascimento;
+    private LocalDate dataAdmissao;
+    private LocalDate dataDemissao;
+    private String cargo;
+    private String endereco;
+    private String telefone;
+    private String email;
+    private String cpf;
+    private String rg;
+    private String situacao;
 }

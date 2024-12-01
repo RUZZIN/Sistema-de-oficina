@@ -2,11 +2,15 @@ package com.sistemaOficina.backend.repositorio;
 
 import com.sistemaOficina.backend.entidade.Funcionario;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,21 +24,45 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
 
     @Override
     public void salvar(Funcionario funcionario) {
-        String sql = "INSERT INTO funcionario (nome) VALUES (?)";
+        String sql = "INSERT INTO funcionario (nome, salario, data_nascimento, data_admissao, data_demissao, cargo, endereco, telefone, email, cpf, rg, situacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
+            stmt.setBigDecimal(2, new BigDecimal(funcionario.getSalario()));  // Certifique-se que 'salario' é um BigDecimal ou double
+            stmt.setDate(3, java.sql.Date.valueOf(funcionario.getDataNascimento())); // Converte LocalDate para SQL Date
+            stmt.setDate(4, java.sql.Date.valueOf(funcionario.getDataAdmissao())); // Converte LocalDate para SQL Date
+            stmt.setDate(5, java.sql.Date.valueOf(funcionario.getDataDemissao())); // Converte LocalDate para SQL Date
+            stmt.setString(6, funcionario.getCargo());
+            stmt.setString(7, funcionario.getEndereco());
+            stmt.setString(8, funcionario.getTelefone());
+            stmt.setString(9, funcionario.getEmail());
+            stmt.setString(10, funcionario.getCpf());
+            stmt.setString(11, funcionario.getRg());
+            stmt.setString(12, funcionario.getSituacao());
             stmt.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        
     }
 
     @Override
     public void atualizar(Funcionario funcionario) {
-        String sql = "UPDATE funcionario SET nome = ? WHERE id = ?";
+        String sql = "UPDATE funcionario SET nome = ?, salario = ?, data_nascimento = ?, data_admissao = ?, data_demissao = ?, cargo = ?, endereco = ?, telefone = ?, email = ?, cpf = ?, rg = ?, situacao = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getNome());
-            stmt.setLong(2, funcionario.getId());
+            stmt.setBigDecimal(2, new BigDecimal(funcionario.getSalario())); // Cast correto
+            stmt.setDate(3, java.sql.Date.valueOf(funcionario.getDataNascimento()));
+            stmt.setDate(4, java.sql.Date.valueOf(funcionario.getDataAdmissao()));
+            stmt.setDate(5, funcionario.getDataDemissao() != null ? java.sql.Date.valueOf(funcionario.getDataDemissao())
+                    : null);
+            stmt.setString(6, funcionario.getCargo());
+            stmt.setString(7, funcionario.getEndereco());
+            stmt.setString(8, funcionario.getTelefone());
+            stmt.setString(9, funcionario.getEmail());
+            stmt.setString(10, funcionario.getCpf());
+            stmt.setString(11, funcionario.getRg());
+            stmt.setString(12, funcionario.getSituacao());
+            stmt.setLong(13, funcionario.getId());
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,7 +75,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -59,9 +87,9 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Funcionario(rs.getLong("id"), rs.getString("nome"));
+                return criarFuncionario(rs);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -74,11 +102,43 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                lista.add(new Funcionario(rs.getLong("id"), rs.getString("nome")));
+                lista.add(criarFuncionario(rs));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    private Funcionario criarFuncionario(ResultSet rs) throws SQLException {
+        return new Funcionario(
+                rs.getLong("id"),
+                rs.getString("nome"),
+                rs.getString("salario"),
+                rs.getObject("data_nascimento", LocalDate.class),
+                rs.getObject("data_admissao", LocalDate.class),
+                rs.getObject("data_demissao", LocalDate.class),
+                rs.getString("cargo"),
+                rs.getString("endereco"),
+                rs.getString("telefone"),
+                rs.getString("email"),
+                rs.getString("cpf"),
+                rs.getString("rg"),
+                rs.getString("situacao"));
+    }
+
+    private void preencherStatement(Funcionario funcionario, PreparedStatement stmt) throws SQLException {
+        stmt.setString(1, funcionario.getNome());
+        stmt.setString(2, funcionario.getSalario());
+        stmt.setObject(3, funcionario.getDataNascimento());
+        stmt.setObject(4, funcionario.getDataAdmissao());
+        stmt.setObject(5, funcionario.getDataDemissao());
+        stmt.setString(6, funcionario.getCargo());
+        stmt.setString(7, funcionario.getEndereco());
+        stmt.setString(8, funcionario.getTelefone());
+        stmt.setString(9, funcionario.getEmail());
+        stmt.setString(10, funcionario.getCpf());
+        stmt.setString(11, funcionario.getRg());
+        stmt.setString(12, funcionario.getSituacao());
     }
 }

@@ -1,5 +1,15 @@
 export interface Funcionario {
-    id: number; // Altere para 'number' em vez de 'Long' (Java)
-    nome: string;
-  }
-  
+  id: number;
+  nome: string;
+  salario: number;
+  dataNascimento: string;  // Definir como string para compatibilidade com JSON
+  dataAdmissao: string;    // Definir como string para compatibilidade com JSON
+  dataDemissao: string;    // Definir como string para compatibilidade com JSON
+  cargo: string;
+  endereco: string;
+  telefone: string;
+  email: string;
+  cpf: string;
+  rg: string;
+  situacao: string;
+}

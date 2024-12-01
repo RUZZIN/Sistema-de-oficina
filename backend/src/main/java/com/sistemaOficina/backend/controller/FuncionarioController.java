@@ -3,6 +3,7 @@ package com.sistemaOficina.backend.controller;
 import com.sistemaOficina.backend.entidade.Funcionario;
 import com.sistemaOficina.backend.repositorio.FuncionarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,10 +39,15 @@ public class FuncionarioController {
 
     // Criar novo funcionário
     @PostMapping
-    public ResponseEntity<Void> criarFuncionario(@RequestBody Funcionario novoFuncionario) {
-        funcionarioRepository.salvar(novoFuncionario);
-        return ResponseEntity.ok().build();
-    }
+public ResponseEntity<Funcionario> salvarFuncionario(@RequestBody Funcionario funcionario) {
+    // Verifica os dados recebidos
+    System.out.println("Funcionario Recebido: " + funcionario);
+    
+    // Aqui, salvar no banco de dados
+    funcionarioRepository.salvar(funcionario);
+    
+    return ResponseEntity.status(HttpStatus.CREATED).body(funcionario);
+}
 
     // Atualizar funcionário existente
     @PutMapping("/{id}")
