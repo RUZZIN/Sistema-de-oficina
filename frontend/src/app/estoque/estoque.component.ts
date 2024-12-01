@@ -87,7 +87,7 @@ export class EstoqueComponent implements OnInit {
           const deleteRequests = this.selectedPecas
             .filter((peca) => peca.id !== undefined) // Remove itens sem ID
             .map((peca) => this.estoqueService.deletePeca(peca.id!)); // Use o operador de negação '!' para garantir que não é undefined
-  
+
           if (deleteRequests.length > 0) {
             forkJoin(deleteRequests).subscribe({
               next: () => {
@@ -121,7 +121,7 @@ export class EstoqueComponent implements OnInit {
       },
     });
   }
-  
+
 
   editPeca(peca: Peca) {
     this.peca = { ...peca };
@@ -155,7 +155,7 @@ export class EstoqueComponent implements OnInit {
   }
 
   savePeca() {
-    this.submitted = true;
+    this.submitted = true; 
 
     if (this.peca.nome?.trim()) {
       if (this.peca.id) {

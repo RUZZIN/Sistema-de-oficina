@@ -1,1 +1,217 @@
-<p>clientes works!</p>
+<div class="card">
+  <p-toast></p-toast>
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        severity="success"
+        label="Novo"
+        icon="pi pi-plus"
+        class="mr-2"
+        (onClick)="abrirNovo()"
+      ></p-button>
+      <p-button
+        severity="danger"
+        label="Excluir"
+        icon="pi pi-trash"
+        (onClick)="deletarClientesSelecionados()"
+        [disabled]="!selectedClientes || !selectedClientes.length"
+      ></p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="clientes"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['nome', 'cpf', 'email']"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [(selection)]="selectedClientes"
+    dataKey="id"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th>Nome</th>
+        <th>CPF/CNPJ</th>
+        <th>Email</th>
+        <th>Telefone 1</th>
+        <th>Telefone 2</th>
+        <th>Razão Social</th>
+        <th>Ações</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-cliente>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="cliente"></p-tableCheckbox>
+        </td>
+        <td>{{ cliente.nome }}</td>
+        <td>{{ cliente.cnpj || cliente.cpf }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>{{ cliente.ddi1 }}{{ cliente.ddd1 }}{{ cliente.numero1 }}</td>
+        <td>{{ cliente.ddi2 }}{{ cliente.ddd2 }}{{ cliente.numero2 }}</td>
+        <td>{{ cliente.razaoSocial }}</td>
+        <td>
+          <p-button
+            icon="pi pi-pencil"
+            severity="success"
+            [rounded]="true"
+            (onClick)="editarCliente(cliente)"
+          ></p-button>
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            (onClick)="deletarCliente(cliente)"
+          ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="clienteDialog"
+    [style]="{ width: '450px' }"
+    header="Detalhes do Cliente"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="nome">Nome</label>
+        <input
+          type="text"
+          pInputText
+          id="nome"
+          [(ngModel)]="cliente.nome"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !cliente.nome">
+          Nome é obrigatório.
+        </small>
+      </div>
+      <div class="field">
+        <label for="logradouro">Logradouro</label>
+        <input
+          type="text"
+          pInputText
+          id="logradouro"
+          [(ngModel)]="cliente.logradouro"
+        />
+      </div>
+      <div class="field">
+        <label for="numero">Número</label>
+        <input
+          type="text"
+          pInputText
+          id="numero"
+          [(ngModel)]="cliente.numero"
+        />
+      </div>
+      <div class="field">
+        <label for="complemento">Complemento</label>
+        <input
+          type="text"
+          pInputText
+          id="complemento"
+          [(ngModel)]="cliente.complemento"
+        />
+      </div>
+
+      <!-- Telefone 1 -->
+      <div class="field-group telefone-grid">
+        <div class="field">
+          <label for="ddi1">DDI</label>
+          <input type="text" pInputText id="ddi1" [(ngModel)]="cliente.ddi1" />
+        </div>
+
+        <div class="field">
+          <label for="ddd1">DDD</label>
+          <input type="text" pInputText id="ddd1" [(ngModel)]="cliente.ddd1" />
+        </div>
+
+        <div class="field numero1">
+          <label for="numero1">Telefone</label>
+          <input type="text" pInputText id="numero1" [(ngModel)]="cliente.numero1" />
+        </div>
+      </div>
+
+      <!-- Telefone 2 -->
+      <div class="field-group telefone-grid">
+        <div class="field">
+          <label for="ddi2">DDI</label>
+          <input type="text" pInputText id="ddi2" [(ngModel)]="cliente.ddi2" />
+        </div>
+
+        <div class="field">
+          <label for="ddd2">DDD</label>
+          <input type="text" pInputText id="ddd2" [(ngModel)]="cliente.ddd2" />
+        </div>
+
+        <div class="field numero2">
+          <label for="numero2">Telefone</label>
+          <input type="text" pInputText id="numero2" [(ngModel)]="cliente.numero2" />
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          pInputText
+          id="email"
+          [(ngModel)]="cliente.email"
+        />
+      </div>
+
+      <!-- Dropdown do tipo de clientes
+        PessoaFisica
+        PessoaJuridica
+      -->
+      <div class="p-field">
+        <label for="tipoCliente">Tipo de Cliente</label>
+        <p-dropdown
+          [options]="tiposClientes"
+          [(ngModel)]="cliente.tipoCliente"
+          placeholder="Selecione o Tipo"
+          (onChange)="alterarTipoCliente()">
+        </p-dropdown>
+      </div>
+
+      <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaFisica'">
+        <label for="cpf">CPF</label>
+        <input id="cpf" type="text" pInputText [(ngModel)]="cliente.cnpj" />
+      </div>
+
+      <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaJuridica'">
+        <label for="cnpj">CNPJ</label>
+        <input id="cnpj" type="text" pInputText [(ngModel)]="cliente.cnpj" />
+
+        <label for="inscricaoEstadual">Inscrição Estadual</label>
+        <input id="inscricaoEstadual" type="text" pInputText [(ngModel)]="cliente.inscricaoEstadual" />
+
+        <label for="contato">Contato</label>
+        <input id="contato" type="text" pInputText [(ngModel)]="cliente.contato" />
+      </div>
+
+
+      <!-- Razão Social -->
+      <div class="p-field">
+        <label for="razaoSocial">Razão Social</label>
+        <input id="razaoSocial" type="text" pInputText [(ngModel)]="cliente.razaoSocial" />
+      </div>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <p-button label="Cancelar" icon="pi pi-times" (onClick)="esconderDialogo()"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (onClick)="salvarCliente()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>
+
+<p-confirmDialog/>
