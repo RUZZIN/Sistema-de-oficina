@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -288,8 +288,7 @@ public class OrdemServicoController {
     public List<ItensPeca> buscarItensPecaPorNumeroOs(@PathVariable Long numeroOs) {
         List<ItensPeca> itensPeca = itensPecaRepository.buscarPorNumeroOs(numeroOs);
         if (itensPeca.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Nenhum item de peça encontrado para esta ordem de serviço");
+            return new ArrayList<>();
         }
         return itensPeca;
     }
@@ -298,8 +297,7 @@ public class OrdemServicoController {
     public List<ItensServico> buscarItensServicoPorNumeroOs(@PathVariable Long numeroOs) {
         List<ItensServico> itensServico = itensServicoRepositoryImpl.buscarPorNumeroOs(numeroOs);
         if (itensServico.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Nenhum item de serviço encontrado para esta ordem de serviço");
+            return new ArrayList<>();
         }
         return itensServico;
     }

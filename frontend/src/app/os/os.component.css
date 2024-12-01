@@ -64,3 +64,11 @@
   background-color: gray !important;
   color: white !important; /* Texto branco para fundo escuro */
 }
+.btn-edit {
+  margin-right: 10px; /* Adiciona margem entre os botões */
+}
+
+.btn-pdf {
+  background-color: red; /* Define a cor de fundo vermelha */
+  color: white; /* Define a cor do texto branco */
+}
