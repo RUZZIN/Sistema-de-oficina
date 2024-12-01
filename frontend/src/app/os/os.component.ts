@@ -112,10 +112,11 @@ export class OsComponent implements OnInit {
   }
 
   loadOss() {
-    this.osService.getOss().subscribe((data) => {
-      this.oss = data;
+    this.osService.getOss().subscribe((oss) => {
+      this.oss = oss;  
     });
   }
+  
 
   loadVeiculos() {
     this.veiculoService.getVeiculos().subscribe((data) => {
@@ -168,11 +169,9 @@ export class OsComponent implements OnInit {
   }
 
   saveOs() {
-
     const requestPayload = {
-      status: this.ordemServico.status, 
-      placaVeiculo: this.selectedVeiculo?.placa, 
-
+      status: this.ordemServico.status,
+      placaVeiculo: this.selectedVeiculo?.placa,
       itensPeca: this.itensPeca.map((item) => ({
         quantidade: item.quantidade,
         idPeca: item.idPeca.id,
@@ -185,20 +184,27 @@ export class OsComponent implements OnInit {
         idServico: item.idServico.id,
       })),
     };
-
-    
-
-    this.osService.addOs(requestPayload).subscribe(() => {
+  
+    // Envia a solicitação para adicionar a ordem de serviço
+    this.osService.addOs(requestPayload).subscribe((novaOs) => {
+      // Atualiza a lista oss com a nova ordem de serviço. Se a resposta retornar o objeto da nova OS, usamos ele aqui.
+      
+  
       this.messageService.add({
         severity: 'success',
         summary: 'Sucesso',
         detail: 'Ordem de Serviço criada com sucesso!',
       });
+  
+      // Fecha o diálogo (caso o modal esteja sendo usado)
       this.hideDialog();
+      
     });
-    this.loadOss()
+    this.loadOss();
+    this.loadOss();
+    this.loadOss();
   }
-
+  
   editOs(ordemServico: OrdemServico, placa: string) {
     this.ordemServico = { ...ordemServico };
     console.log("-------------"+placa)
@@ -292,6 +298,7 @@ export class OsComponent implements OnInit {
         });
         this.hideDialog();
       });
+      this.loadOss();
       this.loadOss();
   }
   

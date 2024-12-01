@@ -13,7 +13,6 @@ export class VeiculoService {
 
   // Método para obter todos os veículos
   getVeiculos(): Observable<Veiculo[]> {
-    console.log("AQUI:")
     return this.httpClient.get<Veiculo[]>(this.apiUrl);
   }
 

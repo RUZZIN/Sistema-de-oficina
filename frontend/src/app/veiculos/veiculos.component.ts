@@ -7,72 +7,74 @@ import { Marca } from '../models/Marca';
 import { Modelo } from '../models/Modelo';
 import { ModeloService } from '../../services/modelo.service';
 import { MarcaService } from '../../services/marca.service';
-
+import { DialogModule } from 'primeng/dialog'; // Importando o DialogModule
+import { ButtonModule } from 'primeng/button'; // Para o botão
 
 @Component({
   selector: 'app-veiculo',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, DialogModule],
   template: `
      <div class="container">
-  <h2>Gestão de Veículos</h2>
 
-  <form [formGroup]="veiculoForm" (ngSubmit)="saveVeiculo()">
-  <div>
-    <label for="placa">Placa:</label>
-    <input id="placa" formControlName="placa" />
-  </div>
+  <!-- Botão para abrir o dialog -->
+  <button pButton label="Adicionar Veículo" icon="pi pi-plus" (click)="openDialog()"></button>
 
-  <!-- Dropdown para selecionar o Modelo -->
-  <div>
-    <label for="modelo">Modelo:</label>
-    <select id="modelo" formControlName="modelo">
-      <option *ngFor="let modelo of modelos" [value]="modelo.id">
-        {{ modelo.nome }}
-      </option>
-    </select>
-  </div>
+  <!-- Dialog do formulário -->
+  <p-dialog header="{{ editMode ? 'Editar Veículo' : 'Adicionar Veículo' }}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{ width: '20%' }">
+    <form [formGroup]="veiculoForm" (ngSubmit)="saveVeiculo()">
+      <div>
+        <label for="placa">Placa:</label> <br/>
+        <input id="placa" formControlName="placa" />
+      </div>
 
-  <!-- Dropdown para selecionar a Marca -->
-  <div>
-    <label for="marca">Marca:</label>
-    <select id="marca" formControlName="marca">
-      <option *ngFor="let marca of marcas" [value]="marca.id">
-        {{ marca.nome }}
-      </option>
-    </select>
-  </div>
+      <div>
+        <label for="modelo">Modelo:</label> <br/>
+        <select id="modelo" formControlName="modelo">
+          <option *ngFor="let modelo of modelos" [value]="modelo.id">
+            {{ modelo.nome }}
+          </option>
+        </select>
+      </div>
 
-  <div>
-    <label for="quilometragem">Quilometragem:</label>
-    <input id="quilometragem" formControlName="quilometragem" />
-  </div>
+      <div>
+        <label for="marca">Marca:</label> <br/>
+        <select id="marca" formControlName="marca">
+          <option *ngFor="let marca of marcas" [value]="marca.id">
+            {{ marca.nome }}
+          </option>
+        </select>
+      </div>
 
-  <div>
-    <label for="chassi">Chassi:</label>
-    <input id="chassi" formControlName="chassi" />
-  </div>
+      <div>
+        <label for="quilometragem">Quilometragem:</label> <br/>
+        <input id="quilometragem" formControlName="quilometragem" />
+      </div>
 
-  <div>
-    <label for="patrimonio">Patrimônio:</label>
-    <input id="patrimonio" formControlName="patrimonio" />
-  </div>
+      <div>
+        <label for="chassi">Chassi:</label> <br/>
+        <input id="chassi" formControlName="chassi" />
+      </div>
 
-  <div>
-    <label for="anoModelo">Ano Modelo:</label>
-    <input id="anoModelo" formControlName="anoModelo" />
-  </div>
+      <div>
+        <label for="patrimonio">Patrimônio:</label> <br/>
+        <input id="patrimonio" formControlName="patrimonio" />
+      </div>
 
-  <div>
-    <label for="anoFabricacao">Ano Fabricação:</label>
-    <input id="anoFabricacao" formControlName="anoFabricacao" />
-  </div>
+      <div>
+        <label for="anoModelo">Ano Modelo:</label> <br/>
+        <input id="anoModelo" formControlName="anoModelo" />
+      </div>
 
-  <button type="submit">{{ editMode ? 'Atualizar' : 'Salvar' }}</button>
-</form>
+      <div>
+        <label for="anoFabricacao">Ano Fabricação:</label> <br/>
+        <input id="anoFabricacao" formControlName="anoFabricacao" />
+      </div>
+      <button pButton (click)="closeDialog()" label="Fechar"></button>
+      <button pButton type="submit" label="{{ editMode ? 'Atualizar' : 'Salvar' }}"></button>
+    </form>
+  </p-dialog>
 
-
-  <h3>Lista de Veículos</h3>
   <table>
     <thead>
       <tr>
@@ -88,20 +90,19 @@ import { MarcaService } from '../../services/marca.service';
     <tbody>
       <tr *ngFor="let veiculo of veiculos">
         <td>{{ veiculo.placa }}</td>
-        <td>{{ veiculo.idModelo?.nome }}</td> <!-- Nome do modelo associado -->
-        <td>{{ veiculo.idModelo?.idMarca?.nome }}</td> <!-- Nome da marca através do idModelo -->
+        <td>{{ veiculo.idModelo?.nome }}</td>
+        <td>{{ veiculo.idModelo?.idMarca?.nome }}</td>
         <td>{{ veiculo.quilometragem }}</td>
         <td>{{ veiculo.chassi }}</td>
         <td>{{ veiculo.patrimonio }}</td>
         <td>
-          <button (click)="editVeiculo(veiculo)">Editar</button>
-          <button (click)="deleteVeiculo(veiculo.placa!)">Deletar</button>
+          <button pButton icon="pi pi-pencil" (click)="editVeiculo(veiculo)"></button>
+          <button pButton icon="pi pi-trash" (click)="deleteVeiculo(veiculo.placa!)"></button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-  
   `,
   styleUrls: ['./veiculos.component.css']
 })
@@ -112,6 +113,7 @@ export class VeiculoComponent implements OnInit {
   veiculoForm: FormGroup;
   editMode = false;
   selectedVeiculoId?: string;
+  displayDialog: boolean = false; // Controle do dialog
 
   constructor(
     private veiculoService: VeiculoService,
@@ -129,14 +131,13 @@ export class VeiculoComponent implements OnInit {
       anoModelo: [0],
       anoFabricacao: [0],
     });
-  } 
+  }
 
   ngOnInit(): void {
     this.loadVeiculos();
     this.loadMarcas();
   }
 
-  // Carregar os veículos
   loadVeiculos(): void {
     this.veiculoService.getVeiculos().subscribe({
       next: (data) => (this.veiculos = data),
@@ -144,18 +145,16 @@ export class VeiculoComponent implements OnInit {
     });
   }
 
-  // Carregar as marcas utilizando MarcaService
   loadMarcas(): void {
     this.marcaService.getMarcas().subscribe({
       next: (data) => {
         this.marcas = data;
-        this.loadModelos(); // Após carregar marcas, carregamos os modelos
+        this.loadModelos();
       },
       error: (err) => console.error('Erro ao carregar marcas:', err),
     });
   }
 
-  // Carregar os modelos utilizando ModeloService
   loadModelos(): void {
     this.modeloService.getModelos().subscribe({
       next: (data) => (this.modelos = data),
@@ -163,20 +162,25 @@ export class VeiculoComponent implements OnInit {
     });
   }
 
-  // Salvar ou atualizar veículo
+  openDialog(): void {
+    this.editMode = false;
+    this.veiculoForm.reset();
+    this.displayDialog = true;
+  }
+
   saveVeiculo(): void {
     const veiculoFormValue = this.veiculoForm.value;
 
     const veiculo: Veiculo = {
       ...veiculoFormValue,
-      idModelo: { id: veiculoFormValue.modelo }, // Associa o ID selecionado ao objeto `idModelo`
+      idModelo: { id: veiculoFormValue.modelo },
     };
 
     if (this.editMode) {
       this.veiculoService.updateVeiculo(this.selectedVeiculoId!, veiculo).subscribe({
         next: () => {
           this.loadVeiculos();
-          this.resetForm();
+          this.closeDialog();
         },
         error: (err) => console.error('Erro ao atualizar veículo:', err),
       });
@@ -184,14 +188,13 @@ export class VeiculoComponent implements OnInit {
       this.veiculoService.addVeiculo(veiculo).subscribe({
         next: () => {
           this.loadVeiculos();
-          this.resetForm();
+          this.closeDialog();
         },
         error: (err) => console.error('Erro ao adicionar veículo:', err),
       });
     }
   }
 
-  // Editar veículo
   editVeiculo(veiculo: Veiculo): void {
     this.editMode = true;
     this.selectedVeiculoId = veiculo.placa;
@@ -200,9 +203,9 @@ export class VeiculoComponent implements OnInit {
       modelo: veiculo.idModelo?.id,
       marca: veiculo.idModelo?.idMarca?.id,
     });
+    this.displayDialog = true;
   }
 
-  // Deletar veículo
   deleteVeiculo(id: string): void {
     this.veiculoService.deleteVeiculo(id).subscribe({
       next: () => this.loadVeiculos(),
@@ -210,11 +213,7 @@ export class VeiculoComponent implements OnInit {
     });
   }
 
-  // Resetar o formulário
-  resetForm(): void {
-    this.editMode = false;
-    this.selectedVeiculoId = undefined;
-    this.veiculoForm.reset();
+  closeDialog(): void {
+    this.displayDialog = false;
   }
 }
-
