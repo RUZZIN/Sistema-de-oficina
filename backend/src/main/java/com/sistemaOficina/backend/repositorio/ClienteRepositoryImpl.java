@@ -1,8 +1,6 @@
 package com.sistemaOficina.backend.repositorio;
 
 import com.sistemaOficina.backend.entidade.Cliente;
-import com.sistemaOficina.backend.entidade.PessoaFisica;
-import com.sistemaOficina.backend.entidade.PessoaJuridica;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -11,157 +9,157 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ClienteRepositoryImpl implements ClienteRepository {
-
+public class ClienteRepositoryImpl {
     private final DataSource dataSource;
 
     public ClienteRepositoryImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    // Obter conexão com o banco de dados
     private Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
-    @Override
+    // Salvar ou atualizar cliente
     public void salvar(Cliente cliente) {
-        String sql = "INSERT INTO cliente (nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj, inscricao_estadual, contato, tipo_cliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            setCommonParameters(stmt, cliente);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+        String sql;
 
-    @Override
-    public void atualizar(Cliente cliente) {
-        String sql = "UPDATE cliente SET nome = ?, logradouro = ?, numero = ?, complemento = ?, ddi1 = ?, ddd1 = ?, numero1 = ?, ddi2 = ?, ddd2 = ?, numero2 = ?, email = ?, cpf = ?, cnpj = ?, inscricao_estadual = ?, contato = ?, tipo_cliente = ? WHERE id = ?";
-        try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            setCommonParameters(stmt, cliente);
-            stmt.setLong(17, cliente.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // Se o cliente não tem ID (é um novo cliente), faz um INSERT
+        if (cliente.getId() == null) {
+            sql = "INSERT INTO cliente (nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj, inscricao_estadual, contato, tipo_cliente) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        } else {
+            // Caso contrário, faz um UPDATE
+            sql = "UPDATE cliente SET nome = ?, logradouro = ?, numero = ?, complemento = ?, ddi1 = ?, ddd1 = ?, numero1 = ?, ddi2 = ?, ddd2 = ?, numero2 = ?, email = ?, " +
+                    "cpf = ?, cnpj = ?, inscricao_estadual = ?, contato = ?, tipo_cliente = ? WHERE id = ?";
         }
-    }
 
-    @Override
-    public void deletar(Long id) {
-        String sql = "DELETE FROM cliente WHERE id = ?";
-        try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-    @Override
-    public Cliente buscarPorId(Long id) {
-        String sql = "SELECT * FROM cliente WHERE id = ?";
-        try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return mapResultSetToCliente(rs);
+            preparedStatement.setString(1, cliente.getNome());
+            preparedStatement.setString(2, cliente.getLogradouro());
+            preparedStatement.setString(3, cliente.getNumero());
+            preparedStatement.setString(4, cliente.getComplemento());
+            preparedStatement.setInt(5, cliente.getDdi1());
+            preparedStatement.setInt(6, cliente.getDdd1());
+            preparedStatement.setInt(7, cliente.getNumero1());
+            preparedStatement.setObject(8, cliente.getDdi2(), Types.INTEGER);
+            preparedStatement.setObject(9, cliente.getDdd2(), Types.INTEGER);
+            preparedStatement.setObject(10, cliente.getNumero2(), Types.INTEGER);
+            preparedStatement.setString(11, cliente.getEmail());
+            preparedStatement.setString(12, cliente.getCpf());
+            preparedStatement.setString(13, cliente.getCnpj());
+            preparedStatement.setString(14, cliente.getInscricaoEstadual());
+            preparedStatement.setString(15, cliente.getContato());
+            preparedStatement.setString(16, cliente.getTipoCliente());
+
+            // Se for uma atualização, adiciona o ID ao PreparedStatement
+            if (cliente.getId() != null) {
+                preparedStatement.setLong(17, cliente.getId());
             }
+
+            preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Erro ao salvar ou atualizar o cliente", e);
         }
-        return null;
     }
 
-    @Override
+    // Buscar todos os clientes
     public List<Cliente> buscarTodos() {
-        List<Cliente> cliente = new ArrayList<>();
+        List<Cliente> clientes = new ArrayList<>();
         String sql = "SELECT * FROM cliente";
-        try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                cliente.add(mapResultSetToCliente(rs));
+
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            while (resultSet.next()) {
+                Cliente cliente = new Cliente();
+                cliente.setId(resultSet.getLong("id"));
+                cliente.setNome(resultSet.getString("nome"));
+                cliente.setLogradouro(resultSet.getString("logradouro"));
+                cliente.setNumero(resultSet.getString("numero"));
+                cliente.setComplemento(resultSet.getString("complemento"));
+                cliente.setDdi1(resultSet.getInt("ddi1"));
+                cliente.setDdd1(resultSet.getInt("ddd1"));
+                cliente.setNumero1(resultSet.getInt("numero1"));
+                cliente.setDdi2((Integer) resultSet.getObject("ddi2"));
+                cliente.setDdd2((Integer) resultSet.getObject("ddd2"));
+                cliente.setNumero2((Integer) resultSet.getObject("numero2"));
+                cliente.setEmail(resultSet.getString("email"));
+                cliente.setCpf(resultSet.getString("cpf"));
+                cliente.setCnpj(resultSet.getString("cnpj"));
+                cliente.setInscricaoEstadual(resultSet.getString("inscricao_estadual"));
+                cliente.setContato(resultSet.getString("contato"));
+                cliente.setTipoCliente(resultSet.getString("tipo_cliente"));
+                clientes.add(cliente);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar os clientes", e);
         }
+
+        return clientes;
+    }
+
+    // Buscar cliente por ID
+    public Cliente buscarPorId(Long id) {
+        Cliente cliente = null;
+        String sql = "SELECT * FROM cliente WHERE id = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    cliente = new Cliente();
+                    cliente.setId(resultSet.getLong("id"));
+                    cliente.setNome(resultSet.getString("nome"));
+                    cliente.setLogradouro(resultSet.getString("logradouro"));
+                    cliente.setNumero(resultSet.getString("numero"));
+                    cliente.setComplemento(resultSet.getString("complemento"));
+                    cliente.setDdi1(resultSet.getInt("ddi1"));
+                    cliente.setDdd1(resultSet.getInt("ddd1"));
+                    cliente.setNumero1(resultSet.getInt("numero1"));
+                    cliente.setDdi2((Integer) resultSet.getObject("ddi2"));
+                    cliente.setDdd2((Integer) resultSet.getObject("ddd2"));
+                    cliente.setNumero2((Integer) resultSet.getObject("numero2"));
+                    cliente.setEmail(resultSet.getString("email"));
+                    cliente.setCpf(resultSet.getString("cpf"));
+                    cliente.setCnpj(resultSet.getString("cnpj"));
+                    cliente.setInscricaoEstadual(resultSet.getString("inscricao_estadual"));
+                    cliente.setContato(resultSet.getString("contato"));
+                    cliente.setTipoCliente(resultSet.getString("tipo_cliente"));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar o cliente por ID", e);
+        }
+
         return cliente;
     }
 
-    private void setCommonParameters(PreparedStatement stmt, Cliente cliente) throws SQLException {
-        stmt.setString(1, cliente.getNome());
-        stmt.setString(2, cliente.getLogradouro());
-        stmt.setString(3, cliente.getNumero());
-        stmt.setString(4, cliente.getComplemento());
-        stmt.setInt(5, cliente.getDdi1()); // Agora Integer
-        stmt.setInt(6, cliente.getDdd1()); // Agora Integer
-        stmt.setInt(7, cliente.getNumero1()); // Agora Integer
-    
-        // Valores que podem ser nulos
-        if (cliente.getDdi2() != null) {
-            stmt.setInt(8, cliente.getDdi2());
-        } else {
-            stmt.setNull(8, java.sql.Types.INTEGER);
-        }
-    
-        if (cliente.getDdd2() != null) {
-            stmt.setInt(9, cliente.getDdd2());
-        } else {
-            stmt.setNull(9, java.sql.Types.INTEGER);
-        }
-    
-        if (cliente.getNumero2() != null) {
-            stmt.setInt(10, cliente.getNumero2());
-        } else {
-            stmt.setNull(10, java.sql.Types.INTEGER);
-        }
-    
-        stmt.setString(11, cliente.getEmail());
-        stmt.setString(12, cliente.getCpf());
-        stmt.setString(13, cliente.getCnpj());
-        stmt.setString(14, cliente.getInscricaoEstadual());
-        stmt.setString(15, cliente.getContato());
-        stmt.setString(16, cliente instanceof PessoaFisica ? "PessoaFisica" : "PessoaJuridica");
-    }
-    
+    // Deletar cliente por ID
+    public void deletar(Long id) {
+        String sql = "DELETE FROM cliente WHERE id = ?";
 
-    private Cliente mapResultSetToCliente(ResultSet rs) throws SQLException {
-        String tipoCliente = rs.getString("tipo_cliente");
-        if ("PessoaFisica".equals(tipoCliente)) {
-            return new PessoaFisica(
-                rs.getLong("id"),
-                rs.getString("nome"),
-                rs.getString("logradouro"),
-                rs.getString("numero"),
-                rs.getString("complemento"),
-                rs.getInt("ddi1"),
-                rs.getInt("ddd1"),
-                rs.getInt("numero1"),
-                rs.getObject("ddi2", Integer.class),
-                rs.getObject("ddd2", Integer.class),
-                rs.getObject("numero2", Integer.class),
-                rs.getString("email"),
-                rs.getString("cpf"), tipoCliente, tipoCliente, tipoCliente, tipoCliente
-            );
-        } else if ("PessoaJuridica".equals(tipoCliente)) {
-            return new PessoaJuridica(
-                rs.getLong("id"),
-                rs.getString("nome"),
-                rs.getString("logradouro"),
-                rs.getString("numero"),
-                rs.getString("complemento"),
-                rs.getInt("ddi1"),
-                rs.getInt("ddd1"),
-                rs.getInt("numero1"),
-                rs.getObject("ddi2", Integer.class),
-                rs.getObject("ddd2", Integer.class),
-                rs.getObject("numero2", Integer.class),
-                rs.getString("email"),
-                rs.getString("cnpj"),
-                rs.getString("inscricao_estadual"),
-                rs.getString("contato"), tipoCliente, tipoCliente, tipoCliente, tipoCliente, tipoCliente
-            );
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao deletar o cliente", e);
         }
-        return null;
     }
-    
 }

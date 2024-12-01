@@ -36,7 +36,7 @@ import { CommonModule } from '@angular/common';
 export class ClientesComponent implements OnInit {
   clientes: Cliente[] = [];
   clienteDialog: boolean = false;
-  cliente: Cliente = {};
+  cliente: Cliente = { nome: '', tipoCliente: '' };
   selectedClientes: Cliente[] = [];
   submitted: boolean = false;
 
@@ -56,19 +56,20 @@ export class ClientesComponent implements OnInit {
   }
 
   carregarClientes() {
-    this.clienteService.buscarTodosClientes().subscribe((data) => {
+    console.log("Carregando clientes...");
+    this.clienteService.getClientes().subscribe((data) => {
       this.clientes = data;
     });
   }
 
   abrirNovo() {
-    this.cliente = {};
+    this.cliente = { nome: '', tipoCliente: '' };
     this.submitted = false;
     this.clienteDialog = true;
   }
 
   editarCliente(cliente: Cliente) {
-    this.cliente = { ...cliente }; // Isso garante que o cliente a ser editado seja copiado corretamente para o form
+    this.cliente = { ...cliente };
     if (!this.cliente.cnpj) {
       this.cliente.cnpj = ''; // Garantir que o campo cnpj seja inicializado como string vazia se for null ou undefined
     }
@@ -80,7 +81,6 @@ export class ClientesComponent implements OnInit {
     }
     this.clienteDialog = true; // Exibir o dialogo de edição
   }
-
   deletarCliente(cliente: Cliente) {
     this.confirmationService.confirm({
       message: `Você tem certeza que deseja deletar o cliente ${cliente.nome}?`,
@@ -89,19 +89,21 @@ export class ClientesComponent implements OnInit {
       accept: () => {
         if (cliente.id) {
           this.clienteService.deletarCliente(cliente.id).subscribe(() => {
-            this.clientes = this.clientes.filter((c) => c.id !== cliente.id);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Cliente deletado',
-              life: 3000,
-            });
+            //espera 1 segundo e recarrega a página
+            setTimeout(() => {
+              this.carregarClientes();
+              this.carregarClientes();
+              this.carregarClientes();
+              this.carregarClientes();
+              this.carregarClientes();
+            }, 1500);
+            
           });
         }
       },
     });
   }
-
+    
   deletarClientesSelecionados() {
     this.confirmationService.confirm({
       message: 'Tem certeza que deseja deletar os clientes selecionados?',
@@ -135,6 +137,10 @@ export class ClientesComponent implements OnInit {
               },
             });
           } else {
+            this.carregarClientes();
+            this.carregarClientes();
+            this.carregarClientes();
+            this.carregarClientes();
             this.messageService.add({
               severity: 'warn',
               summary: 'Aviso',
@@ -145,45 +151,103 @@ export class ClientesComponent implements OnInit {
         }
       },
     });
+    this.carregarClientes();
+    this.carregarClientes();
+    this.carregarClientes();
   }
 
   salvarCliente() {
     this.submitted = true;
 
-    if (this.cliente.nome?.trim()) {
-      if (this.cliente.id) {
-        // Atualizar cliente existente
-        this.clienteService.atualizarCliente(this.cliente.id, this.cliente).subscribe(() => {
-          this.carregarClientes();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Cliente atualizado',
+    if (!this.cliente.nome?.trim()) {
+        this.messageService.add({
+            severity: 'warn',
+            summary: 'Aviso',
+            detail: 'O nome do cliente é obrigatório.',
             life: 3000,
-          });
         });
-      } else {
-        // Criar novo cliente
-        this.clienteService.salvarCliente(this.cliente).subscribe(() => {
-          this.carregarClientes();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Cliente criado',
-            life: 3000,
-          });
-        });
-      }
-      this.clienteDialog = false;
-      this.cliente = {};
-    } else {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Aviso',
-        detail: 'O nome do cliente é obrigatório.',
-        life: 3000,
-      });
+        return;
     }
+
+    // Garantir que campos de telefone estejam corretos
+    if (this.cliente.ddi1) this.cliente.ddi1 = parseInt(this.cliente.ddi1.toString());
+    if (this.cliente.ddd1) this.cliente.ddd1 = parseInt(this.cliente.ddd1.toString());
+    if (this.cliente.numero1) this.cliente.numero1 = parseInt(this.cliente.numero1.toString());
+
+    if (this.cliente.ddi2) this.cliente.ddi2 = parseInt(this.cliente.ddi2.toString());
+    if (this.cliente.ddd2) this.cliente.ddd2 = parseInt(this.cliente.ddd2.toString());
+    if (this.cliente.numero2) this.cliente.numero2 = parseInt(this.cliente.numero2.toString());
+
+    if (this.cliente.id) {
+        this.clienteService.atualizarCliente(this.cliente).subscribe({
+            next: () => {
+                this.carregarClientes();
+                this.carregarClientes();
+                this.carregarClientes();
+                this.carregarClientes();
+                this.carregarClientes();
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Sucesso',
+                    detail: 'Cliente atualizado com sucesso.',
+                    life: 3000,
+                });
+                this.clienteDialog = false;
+                this.cliente = {};
+            },
+            error: (err) => {
+                console.error(err);
+                this.carregarClientes();
+                this.carregarClientes();
+                this.carregarClientes();
+                this.carregarClientes();
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Erro ao atualizar cliente. Tente novamente mais tarde.',
+                    life: 3000,
+                });
+            },
+        });
+    } else {
+      this.clienteService.salvarCliente(this.cliente).subscribe({
+        next: (response) => {
+            // O corpo agora é uma string, por exemplo: "Cliente criado com sucesso."
+            console.log("Resposta do servidor: ", response.body);
+            
+            if (response.status === 201) {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Sucesso',
+                    detail: response.body?.toString() || 'Cliente criado com sucesso',  // Convertendo para string
+                    life: 3000,
+                });
+                this.clienteDialog = false;
+                this.cliente = {};
+            } else {
+                console.error("Erro inesperado: status " + response.status);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Erro ao criar cliente. Tente novamente mais tarde.',
+                    life: 3000,
+                });
+            }
+        },
+        error: (err) => {
+            console.error("Erro ao salvar cliente: ", err);
+            setTimeout(() => {
+              this.carregarClientes();
+            }, 1000);
+            
+        },
+    });
+    
+    
+    }
+    this.carregarClientes();
+    this.clienteDialog = false;
+    this.cliente = {};
   }
 
   esconderDialogo() {
@@ -197,8 +261,9 @@ export class ClientesComponent implements OnInit {
     if (this.cliente.tipoCliente === 'PessoaFisica') {
       this.cliente.cnpj = '';
       this.cliente.inscricaoEstadual = '';
+      this.cliente.contato = '';
     } else if (this.cliente.tipoCliente === 'PessoaJuridica') {
-      this.cliente.cnpj = '';
+      this.cliente.cpf = ''; // Limpar o CPF quando for Pessoa Jurídica
     }
   }
 }

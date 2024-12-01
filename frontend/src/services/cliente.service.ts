@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cliente } from '../app/models/Cliente';
 
@@ -7,32 +7,34 @@ import { Cliente } from '../app/models/Cliente';
   providedIn: 'root'
 })
 export class ClienteService {
-  private apiUrl = 'http://localhost:8080/api/clientes'; 
 
-  constructor(private http: HttpClient) {}
+  private apiUrl = 'http://localhost:8080/api/clientes';  // URL da API
 
-  // Método para salvar um cliente
-  salvarCliente(cliente: Cliente): Observable<Cliente> {
-    return this.http.post<Cliente>(this.apiUrl, cliente);
+  // Injectando HttpClient no construtor
+  constructor(private http: HttpClient) { }
+
+  // Método para obter todos os clientes
+  getClientes(): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(this.apiUrl);
   }
 
-  // Método para atualizar um cliente
-  atualizarCliente(id: number, cliente: Cliente): Observable<Cliente> {
-    return this.http.put<Cliente>(`${this.apiUrl}/${id}`, cliente);
+  // Método para buscar um cliente por ID
+  getClienteById(id: number): Observable<Cliente> {
+    return this.http.get<Cliente>(`${this.apiUrl}/${id}`);
+  }
+
+// Método para salvar um novo cliente
+salvarCliente(cliente: Cliente): Observable<HttpResponse<Cliente>> {
+  return this.http.post<Cliente>(this.apiUrl, cliente, { observe: 'response' });
+}
+
+  // Método para atualizar um cliente existente
+  atualizarCliente(cliente: Cliente): Observable<Cliente> {
+    return this.http.put<Cliente>(`${this.apiUrl}/${cliente.id}`, cliente);
   }
 
   // Método para deletar um cliente
   deletarCliente(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
-  // Método para buscar cliente por ID
-  buscarClientePorId(id: number): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.apiUrl}/${id}`);
-  }
-
-  // Método para buscar todos os clientes
-  buscarTodosClientes(): Observable<Cliente[]> {
-    return this.http.get<Cliente[]>(this.apiUrl);
   }
 }

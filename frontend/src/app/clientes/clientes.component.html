@@ -136,7 +136,7 @@
 
         <div class="field numero1">
           <label for="numero1">Telefone</label>
-          <input type="text" pInputText id="numero1" [(ngModel)]="cliente.numero1" />
+          <input type="text" pInputText id="numero1" maxlength="9" [(ngModel)]="cliente.numero1" />
         </div>
       </div>
 
@@ -185,7 +185,7 @@
 
       <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaFisica'">
         <label for="cpf">CPF</label>
-        <input id="cpf" type="text" pInputText [(ngModel)]="cliente.cnpj" />
+        <input id="cpf" type="text" pInputText [(ngModel)]="cliente.cpf" />
       </div>
 
       <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaJuridica'">
@@ -197,13 +197,6 @@
 
         <label for="contato">Contato</label>
         <input id="contato" type="text" pInputText [(ngModel)]="cliente.contato" />
-      </div>
-
-
-      <!-- Razão Social -->
-      <div class="p-field">
-        <label for="razaoSocial">Razão Social</label>
-        <input id="razaoSocial" type="text" pInputText [(ngModel)]="cliente.razaoSocial" />
       </div>
 
     </ng-template>
