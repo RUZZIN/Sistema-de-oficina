@@ -9,6 +9,6 @@ export class Veiculo {
   patrimonio?: string;
   anoModelo?: number;
   anoFabricacao?: number;
-  idModelo?: Modelo
+  idModelo?: Modelo;
 
 }

@@ -1,6 +1,8 @@
 package com.sistemaOficina.backend.repositorio;
 
 import com.sistemaOficina.backend.entidade.OrdemServico;
+import com.sistemaOficina.backend.entidade.Veiculo;
+
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -12,10 +14,12 @@ import java.util.List;
 public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
 
     private final DataSource dataSource;
+    private final VeiculoRepository veiculoRepository;
 
     // Construtor que recebe o DataSource para a conexão com o banco
-    public OrdemServicoRepositoryImpl(DataSource dataSource) {
+    public OrdemServicoRepositoryImpl(DataSource dataSource, VeiculoRepository veiculoRepository) {
         this.dataSource = dataSource;
+        this.veiculoRepository = veiculoRepository;
     }
 
     // Método auxiliar para obter a conexão com o banco
@@ -23,36 +27,59 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         return dataSource.getConnection();
     }
 
+    public Long buscarUltimoNumeroOs() {
+        String sql = "SELECT MAX(numero) FROM ordem_servico";
+        
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+        
+            if (resultSet.next()) {
+                return resultSet.getLong(1);  // Retorna o maior número da coluna numero_os
+            } else {
+                return null;  // Se não houver nenhum número (ou tabela vazia)
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar o último número de ordem de serviço", e);
+        }
+    }
+    
+    
+
     @Override
     public void salvar(OrdemServico ordemServico) {
         String sql = "INSERT INTO ordem_servico (data, preco_final, status, placa_veiculo) VALUES (?, ?, ?, ?)";
-
-        try (Connection connection = getConnection(); 
+    
+    
+        try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setDate(1, Date.valueOf(ordemServico.getData())); // Converte LocalDate para java.sql.Date
+    
+            statement.setDate(1, Date.valueOf(ordemServico.getData()));
             statement.setDouble(2, ordemServico.getPrecoFinal());
             statement.setString(3, ordemServico.getStatus());
-            statement.setString(4, ordemServico.getPlacaVeiculo());
+            statement.setString(4, ordemServico.getPlacaVeiculo().getPlaca());
 
+    
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Erro ao salvar ordem de serviço", e);
         }
     }
+    
 
     @Override
     public void atualizar(OrdemServico ordemServico) {
         String sql = "UPDATE ordem_servico SET data = ?, preco_final = ?, status = ?, placa_veiculo = ? WHERE numero = ?";
 
-        try (Connection connection = getConnection(); 
+        try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setDate(1, Date.valueOf(ordemServico.getData()));
             statement.setDouble(2, ordemServico.getPrecoFinal());
             statement.setString(3, ordemServico.getStatus());
-            statement.setString(4, ordemServico.getPlacaVeiculo());
+            statement.setString(4, ordemServico.getPlacaVeiculo().getPlaca());
             statement.setLong(5, ordemServico.getNumero());
 
             statement.executeUpdate();
@@ -61,6 +88,29 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
             throw new RuntimeException("Erro ao atualizar ordem de serviço", e);
         }
     }
+
+    public int buscarQuantidadePorPecaEOrdemServico(Long numeroOrdemServico, Long idPeca) {
+        String sql = "SELECT quantidade FROM itens_peca WHERE numero_os = ? AND id_peca = ?";
+        
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            
+            statement.setLong(1, numeroOrdemServico);
+            statement.setLong(2, idPeca);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("quantidade");
+                } else {
+                    return 0; // Retorna 0 se não houver registro para essa peça na OS
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar quantidade da peça na ordem de serviço", e);
+        }
+    }
+    
 
     @Override
     public void deletar(Long id) {
@@ -89,12 +139,14 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    Veiculo veiculo = veiculoRepository.buscarPorPlaca(resultSet.getString("placa_veiculo"));
+                    //pega do impl veiculo o buscar por placa
                     ordemServico = new OrdemServico(
                             resultSet.getLong("numero"),
                             resultSet.getDate("data").toLocalDate(),
                             resultSet.getDouble("preco_final"),
                             resultSet.getString("status"),
-                            resultSet.getString("placa_veiculo")
+                            veiculo
                     );
                 } else {
                     throw new SQLException("Ordem de serviço com ID " + id + " não encontrada.");
@@ -119,12 +171,14 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
+                Veiculo veiculo = veiculoRepository.buscarPorPlaca(resultSet.getString("placa_veiculo"));
+
                 OrdemServico ordemServico = new OrdemServico(
                         resultSet.getLong("numero"),
                         resultSet.getDate("data").toLocalDate(),
                         resultSet.getDouble("preco_final"),
                         resultSet.getString("status"),
-                        resultSet.getString("placa_veiculo")
+                        veiculo
                 );
                 listaOrdemDeServico.add(ordemServico);
             }
