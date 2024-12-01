@@ -201,12 +201,6 @@ export class ClientesComponent implements OnInit {
                 this.carregarClientes();
                 this.carregarClientes();
                 this.carregarClientes();
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: 'Erro ao atualizar cliente. Tente novamente mais tarde.',
-                    life: 3000,
-                });
             },
         });
     } else {

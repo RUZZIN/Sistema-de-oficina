@@ -18,5 +18,7 @@ public class OrdemServico {
     private double precoFinal;
     private String status;
     private Veiculo placaVeiculo; 
+    private Cliente cliente;
+
 
 }

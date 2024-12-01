@@ -39,7 +39,7 @@
         <th>Email</th>
         <th>Telefone 1</th>
         <th>Telefone 2</th>
-        <th>Razão Social</th>
+        <th>Tipo cliente</th>
         <th>Ações</th>
       </tr>
     </ng-template>
@@ -53,7 +53,8 @@
         <td>{{ cliente.email }}</td>
         <td>{{ cliente.ddi1 }}{{ cliente.ddd1 }}{{ cliente.numero1 }}</td>
         <td>{{ cliente.ddi2 }}{{ cliente.ddd2 }}{{ cliente.numero2 }}</td>
-        <td>{{ cliente.razaoSocial }}</td>
+        <td>{{ cliente.tipoCliente == 'PessoaFisica' ? 'Individual' : 'Corporativa' }}</td>
+
         <td>
           <p-button
             icon="pi pi-pencil"
@@ -73,138 +74,173 @@
   </p-table>
 
   <p-dialog
-    [(visible)]="clienteDialog"
-    [style]="{ width: '450px' }"
-    header="Detalhes do Cliente"
-    [modal]="true"
-    styleClass="p-fluid"
-  >
-    <ng-template pTemplate="content">
+  [(visible)]="clienteDialog"
+  [style]="{ width: '450px' }"
+  header="Detalhes do Cliente"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="nome">Nome</label>
+      <input
+        type="text"
+        pInputText
+        id="nome"
+        [(ngModel)]="cliente.nome"
+        required
+        autofocus
+      />
+      <small class="p-error" *ngIf="submitted && !cliente.nome">
+        Nome é obrigatório.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="logradouro">Logradouro</label>
+      <input
+        type="text"
+        pInputText
+        id="logradouro"
+        [(ngModel)]="cliente.logradouro"
+        required
+      />
+      <small class="p-error" *ngIf="submitted && !cliente.logradouro">
+        Logradouro é obrigatório.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="numero">Número</label>
+      <input
+        type="text"
+        pInputText
+        id="numero"
+        [(ngModel)]="cliente.numero"
+        required
+      />
+      <small class="p-error" *ngIf="submitted && !cliente.numero">
+        Número é obrigatório.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="complemento">Complemento</label>
+      <input
+        type="text"
+        pInputText
+        id="complemento"
+        [(ngModel)]="cliente.complemento"
+      />
+    </div>
+
+    <!-- Telefone 1 -->
+    <div class="field-group telefone-grid">
       <div class="field">
-        <label for="nome">Nome</label>
+        <label for="ddi1">DDI</label>
+        <input type="text" pInputText id="ddi1" [(ngModel)]="cliente.ddi1" required />
+      </div>
+
+      <div class="field">
+        <label for="ddd1">DDD</label>
+        <input type="text" pInputText id="ddd1" [(ngModel)]="cliente.ddd1" required />
+      </div>
+
+      <div class="field numero1">
+        <label for="numero1">Telefone</label>
         <input
           type="text"
           pInputText
-          id="nome"
-          [(ngModel)]="cliente.nome"
+          id="numero1"
+          maxlength="9"
+          [(ngModel)]="cliente.numero1"
           required
-          autofocus
         />
-        <small class="p-error" *ngIf="submitted && !cliente.nome">
-          Nome é obrigatório.
-        </small>
       </div>
+    </div>
+
+    <!-- Telefone 2 -->
+    <div class="field-group telefone-grid">
       <div class="field">
-        <label for="logradouro">Logradouro</label>
-        <input
-          type="text"
-          pInputText
-          id="logradouro"
-          [(ngModel)]="cliente.logradouro"
-        />
+        <label for="ddi2">DDI</label>
+        <input type="text" pInputText id="ddi2" [(ngModel)]="cliente.ddi2" />
       </div>
+
       <div class="field">
-        <label for="numero">Número</label>
-        <input
-          type="text"
-          pInputText
-          id="numero"
-          [(ngModel)]="cliente.numero"
-        />
-      </div>
-      <div class="field">
-        <label for="complemento">Complemento</label>
-        <input
-          type="text"
-          pInputText
-          id="complemento"
-          [(ngModel)]="cliente.complemento"
-        />
+        <label for="ddd2">DDD</label>
+        <input type="text" pInputText id="ddd2" [(ngModel)]="cliente.ddd2" />
       </div>
 
-      <!-- Telefone 1 -->
-      <div class="field-group telefone-grid">
-        <div class="field">
-          <label for="ddi1">DDI</label>
-          <input type="text" pInputText id="ddi1" [(ngModel)]="cliente.ddi1" />
-        </div>
-
-        <div class="field">
-          <label for="ddd1">DDD</label>
-          <input type="text" pInputText id="ddd1" [(ngModel)]="cliente.ddd1" />
-        </div>
-
-        <div class="field numero1">
-          <label for="numero1">Telefone</label>
-          <input type="text" pInputText id="numero1" maxlength="9" [(ngModel)]="cliente.numero1" />
-        </div>
+      <div class="field numero2">
+        <label for="numero2">Telefone</label>
+        <input type="text" pInputText id="numero2" [(ngModel)]="cliente.numero2" />
       </div>
+    </div>
 
-      <!-- Telefone 2 -->
-      <div class="field-group telefone-grid">
-        <div class="field">
-          <label for="ddi2">DDI</label>
-          <input type="text" pInputText id="ddi2" [(ngModel)]="cliente.ddi2" />
-        </div>
+    <!-- Email -->
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        pInputText
+        id="email"
+        [(ngModel)]="cliente.email"
+        required
+      />
+      <small class="p-error" *ngIf="submitted && !cliente.email">
+        Email é obrigatório.
+      </small>
+    </div>
 
-        <div class="field">
-          <label for="ddd2">DDD</label>
-          <input type="text" pInputText id="ddd2" [(ngModel)]="cliente.ddd2" />
-        </div>
+    <!-- Dropdown do tipo de clientes -->
+    <div class="p-field">
+      <label for="tipoCliente">Tipo de Cliente</label>
+      <p-dropdown
+        [options]="tiposClientes"
+        [(ngModel)]="cliente.tipoCliente"
+        placeholder="Selecione o Tipo"
+        (onChange)="alterarTipoCliente()"
+        required
+        appendTo="body"
+      ></p-dropdown>
+      <small class="p-error" *ngIf="submitted && !cliente.tipoCliente">
+        Tipo de Cliente é obrigatório.
+      </small>
+    </div>
+    
 
-        <div class="field numero2">
-          <label for="numero2">Telefone</label>
-          <input type="text" pInputText id="numero2" [(ngModel)]="cliente.numero2" />
-        </div>
-      </div>
+    <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaFisica'">
+      <label for="cpf">CPF</label>
+      <input id="cpf" type="text" pInputText [(ngModel)]="cliente.cpf" required />
+    </div>
 
-      <!-- Email -->
-      <div class="field">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          pInputText
-          id="email"
-          [(ngModel)]="cliente.email"
-        />
-      </div>
+    <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaJuridica'">
+      <label for="cnpj">CNPJ</label>
+      <input id="cnpj" type="text" pInputText [(ngModel)]="cliente.cnpj" required />
 
-      <!-- Dropdown do tipo de clientes
-        PessoaFisica
-        PessoaJuridica
-      -->
-      <div class="p-field">
-        <label for="tipoCliente">Tipo de Cliente</label>
-        <p-dropdown
-          [options]="tiposClientes"
-          [(ngModel)]="cliente.tipoCliente"
-          placeholder="Selecione o Tipo"
-          (onChange)="alterarTipoCliente()">
-        </p-dropdown>
-      </div>
+      <label for="inscricaoEstadual">Inscrição Estadual</label>
+      <input
+        id="inscricaoEstadual"
+        type="text"
+        pInputText
+        [(ngModel)]="cliente.inscricaoEstadual"
+      />
 
-      <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaFisica'">
-        <label for="cpf">CPF</label>
-        <input id="cpf" type="text" pInputText [(ngModel)]="cliente.cpf" />
-      </div>
+      <label for="contato">Contato</label>
+      <input id="contato" type="text" pInputText [(ngModel)]="cliente.contato" />
+    </div>
+  </ng-template>
 
-      <div class="p-field" *ngIf="cliente.tipoCliente === 'PessoaJuridica'">
-        <label for="cnpj">CNPJ</label>
-        <input id="cnpj" type="text" pInputText [(ngModel)]="cliente.cnpj" />
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" (onClick)="esconderDialogo()"></p-button>
+    <p-button label="Salvar" icon="pi pi-check" (onClick)="salvarCliente()"></p-button>
+  </ng-template>
+</p-dialog>
 
-        <label for="inscricaoEstadual">Inscrição Estadual</label>
-        <input id="inscricaoEstadual" type="text" pInputText [(ngModel)]="cliente.inscricaoEstadual" />
 
-        <label for="contato">Contato</label>
-        <input id="contato" type="text" pInputText [(ngModel)]="cliente.contato" />
-      </div>
 
-    </ng-template>
-    <ng-template pTemplate="footer">
-      <p-button label="Cancelar" icon="pi pi-times" (onClick)="esconderDialogo()"></p-button>
-      <p-button label="Salvar" icon="pi pi-check" (onClick)="salvarCliente()"></p-button>
-    </ng-template>
-  </p-dialog>
+
+  
 </div>
 
 <p-confirmDialog/>

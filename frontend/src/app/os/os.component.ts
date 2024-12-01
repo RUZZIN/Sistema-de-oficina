@@ -32,7 +32,8 @@ import { ItensPeca } from '../models/ItensPeca';
 import { ItensServico } from '../models/ItensServico';
 import { Peca } from '../models/Peca';
 import { Observable } from 'rxjs';
-
+import { Cliente } from '../models/Cliente';
+import { ClienteService } from '../../services/cliente.service';
 
 @Component({
   selector: 'app-ordem-servico',
@@ -68,6 +69,7 @@ export class OsComponent implements OnInit {
 
   ordemServico: OrdemServico = {};
   selectedVeiculo: Veiculo | undefined;
+  selectedCliente: Cliente | undefined;
   selectedServico: Servico | undefined;
   selectedFuncionario: Funcionario | undefined;
   selectedOss: OrdemServico[] | null = null;
@@ -76,7 +78,7 @@ export class OsComponent implements OnInit {
   servicos: any[] = [];
   funcionarios: any[] = [];
   veiculos: any[] = [];
-
+  clientes: any[] = [];
   itensPeca: ItensPeca[] = [];
   itensServico: ItensServico[] = [];
 
@@ -85,6 +87,7 @@ export class OsComponent implements OnInit {
 
   ordemServicoRequest: OrdemServicoRequest = {
     placaVeiculo: '',
+    idCliente: 0,
     status: '',
     itensPeca: [],
     itensServico: []
@@ -95,6 +98,7 @@ export class OsComponent implements OnInit {
   
   constructor(
     private osService: OsService,
+    private clienteService: ClienteService,
     private veiculoService: VeiculoService,
     private estoqueService: EstoqueService,
     private servicoService: ServicosService,
@@ -109,6 +113,7 @@ export class OsComponent implements OnInit {
     this.loadServicos();
     this.loadOss()
     this.loadFuncionarios();
+    this.loadClientes();
   }
 
   loadOss() {
@@ -123,7 +128,11 @@ export class OsComponent implements OnInit {
       this.veiculos = data
     });
   }
-
+  loadClientes() {
+    this.clienteService.getClientes().subscribe((data) => {
+      this.clientes = data
+    });
+  }
   loadPecas() {
     this.estoqueService.getPecas().subscribe((data) => (this.pecas = data));
   }
@@ -163,6 +172,7 @@ export class OsComponent implements OnInit {
   openNew() {
     this.ordemServico = {};
     this.selectedVeiculo = undefined;
+    this.selectedCliente = undefined;
     this.itensPeca = [];
     this.itensServico = [];
     this.ordemServicoDialog = true;
@@ -172,6 +182,7 @@ export class OsComponent implements OnInit {
     const requestPayload = {
       status: this.ordemServico.status,
       placaVeiculo: this.selectedVeiculo?.placa,
+      idCliente: this.selectedCliente?.id,
       itensPeca: this.itensPeca.map((item) => ({
         quantidade: item.quantidade,
         idPeca: item.idPeca.id,
@@ -207,7 +218,22 @@ export class OsComponent implements OnInit {
   
   editOs(ordemServico: OrdemServico, placa: string) {
     this.ordemServico = { ...ordemServico };
-    console.log("-------------"+placa)
+
+    const idCliente = ordemServico.cliente?.id;
+    if (!idCliente) {
+      console.error('Cliente não encontrado na ordem de serviço');
+      return;
+    }
+    //trazer o cliente
+    this.clienteService.getClienteById(idCliente).subscribe(
+      (clienteData: Cliente) => {
+        this.selectedCliente = clienteData;
+        console.log("Cliente selecionado:", this.selectedCliente);
+      },
+      (error) => {
+        console.error("Erro ao buscar cliente:", error);
+      }
+    );
      
       this.veiculoService.getVeiculoById(placa).subscribe(
         (veiculoData: Veiculo) => {
@@ -243,8 +269,8 @@ export class OsComponent implements OnInit {
           horarioInicio: item.horarioInicio,
           horarioFim: item.horarioFim,
           quantidade: item.quantidade,
-          idFuncionario: item.idFuncionario, // Apenas o ID
-          idServico: item.idServico,         // Apenas o ID
+          idFuncionario: item.idFuncionario, 
+          idServico: item.idServico,       
           precoTotal: item.precoTotal,
           numeroOs: item.numeroOs
         }));
@@ -259,24 +285,22 @@ export class OsComponent implements OnInit {
   saveEdicao() {
     // Construir o payload para envio
     const requestPayload = {
-      numero: this.ordemServico.numero, // Adicionar o número da OS
       status: this.ordemServico.status,
       placaVeiculo: this.selectedVeiculo?.placa,
-  
+      idCliente: this.selectedCliente?.id,
       itensPeca: this.itensPeca.map((item) => ({
-        id: item.id, // Incluir o ID do item para atualização
         quantidade: item.quantidade,
-        idPeca: { id: item.idPeca.id }, // Estrutura correta para o backend
+        idPeca: item.idPeca.id,
       })),
       itensServico: this.itensServico.map((item) => ({
-        id: item.id, // Incluir o ID do item para atualização
         horarioInicio: item.horarioInicio,
         horarioFim: item.horarioFim,
         quantidade: item.quantidade,
-        idFuncionario: { id: item.idFuncionario.id }, // Estrutura correta para o backend
-        idServico: { id: item.idServico.id }, // Estrutura correta para o backend
+        idFuncionario: item.idFuncionario.id,
+        idServico: item.idServico.id,
       })),
     };
+  
   
     // Chamar o serviço para salvar alterações
     if (this.ordemServico.numero === undefined) {

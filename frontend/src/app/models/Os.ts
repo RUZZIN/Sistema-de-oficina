@@ -1,3 +1,4 @@
+import { Cliente } from "./Cliente";
 import { Veiculo } from "./Veiculo";
 
 export class OrdemServico {
@@ -6,5 +7,7 @@ export class OrdemServico {
     precoFinal?: number; 
     status?: string; 
     placaVeiculo?: String;
+    cliente?: Cliente;
+
   }
   

@@ -56,6 +56,13 @@
     </p-dropdown>
   </div>
   <br />
+  <div class="field">
+    <label for="cliente"><b>Cliente</b></label> <br />
+    <p-dropdown [options]="clientes" [(ngModel)]="selectedCliente" optionLabel="nome"
+      placeholder="Selecione um Veículo">
+    </p-dropdown>
+  </div>
+  <br />
   <div class="">
     <label for="itensPeca"><b>PEÇAS USADAS</b></label>
     <div class="pecas-container" *ngFor="let item of itensPeca">
@@ -132,6 +139,13 @@
   <div class="field">
     <label for="placaVeiculo"><b>VEÍCULO</b></label> <br />
     <p-dropdown [options]="veiculos" [(ngModel)]="selectedVeiculo" optionLabel="idModelo.nome"
+      placeholder="Selecione um Veículo">
+    </p-dropdown>
+  </div>
+  <br />
+  <div class="field">
+    <label for="cliente"><b>Cliente</b></label> <br />
+    <p-dropdown [options]="clientes" [(ngModel)]="selectedCliente" optionLabel="nome"
       placeholder="Selecione um Veículo">
     </p-dropdown>
   </div>

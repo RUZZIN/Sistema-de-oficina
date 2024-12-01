@@ -1,5 +1,6 @@
 package com.sistemaOficina.backend.controller;
 
+import com.sistemaOficina.backend.entidade.Cliente;
 import com.sistemaOficina.backend.entidade.Funcionario;
 import com.sistemaOficina.backend.entidade.ItensPeca;
 import com.sistemaOficina.backend.entidade.ItensServico;
@@ -7,7 +8,9 @@ import com.sistemaOficina.backend.entidade.OrdemServico;
 import com.sistemaOficina.backend.entidade.Pecas;
 import com.sistemaOficina.backend.entidade.Servico;
 import com.sistemaOficina.backend.entidade.Veiculo;
+import com.sistemaOficina.backend.repositorio.ClienteRepositoryImpl;
 import com.sistemaOficina.backend.repositorio.FuncionarioRepository;
+import com.sistemaOficina.backend.repositorio.FuncionarioRepositoryImpl;
 import com.sistemaOficina.backend.repositorio.ItensPecaRepositoryImpl;
 import com.sistemaOficina.backend.repositorio.ItensServicoRepositoryImpl;
 import com.sistemaOficina.backend.repositorio.OrdemServicoRepository;
@@ -40,6 +43,9 @@ public class OrdemServicoController {
     @Autowired
     private ItensPecaRepositoryImpl itensPecaRepository;
 
+    @Autowired  
+    private ClienteRepositoryImpl clienteRepository;
+
     @Autowired
     private ItensServicoRepositoryImpl itensServicoRepositoryImpl;
 
@@ -61,18 +67,29 @@ public class OrdemServicoController {
     public void salvar(@RequestBody OrdemServicoRequest request) {
         double precoTotal = 0;
         
-        // Calcular o número da ordem de serviço baseado no último número registrado
-        Long ultimoNumeroOs = ordemServicoRepositoryImpl.buscarUltimoNumeroOs();
-        Long numero = (ultimoNumeroOs == null) ? 1L : ultimoNumeroOs + 1;
+
         
-        // Criar a ordem de serviço com preço total 0 (temporário)
+        Long ultimoNumero = ordemServicoRepositoryImpl.buscarUltimoNumeroOs();
+        Long numero = (ultimoNumero != null) ? ultimoNumero + 1 : 1; // Caso não exista, começa com 1
         Veiculo veiculo = veiculoRepository.buscarPorPlaca(request.getPlacaVeiculo());
+        Cliente cliente = clienteRepository.buscarPorId(request.getIdCliente());
+
+        if (veiculo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado");
+        }
+        if (cliente == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado");
+        }
+        
+
+        System.err.println("clienaaaaaaaaae"+cliente);
         OrdemServico ordemServico = new OrdemServico(
                 numero,
                 LocalDate.now(),
                 0, // Preço total inicial
                 request.getStatus(), // Status inicial
-                veiculo);
+                veiculo,
+                cliente);
     
         // Salvar a ordem de serviço primeiro
         ordemServicoRepositoryImpl.salvar(ordemServico);
@@ -146,7 +163,6 @@ public class OrdemServicoController {
     
         // Verificar se a Ordem de Serviço existe
         OrdemServico ordemServico = ordemServicoRepository.buscarPorId(numero);
-        System.err.println("aaaaaaaaaaaa"+ordemServico);
         if (ordemServico == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ordem de serviço não encontrada");
         }
@@ -156,6 +172,13 @@ public class OrdemServicoController {
         if (veiculo == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado");
         }
+
+        Cliente cliente = clienteRepository.buscarPorId(request.getIdCliente());
+        if (cliente == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado");
+        }
+
+        ordemServico.setCliente(cliente);
         ordemServico.setStatus(request.getStatus());
         ordemServico.setPlacaVeiculo(veiculo);
     
