@@ -1,0 +1,52 @@
+<div class="dashboard">
+  <div class="grid">
+    <!-- Card: Total de Ordens de Serviço -->
+    <div class="card-item">
+      <p-card header="📋 Total de Ordens de Serviço" styleClass="custom-card">
+        <h2 class="stat-value">{{ dashboardData?.totalOrdensDeServico || 0 }}</h2>
+      </p-card>
+    </div>
+
+    <!-- Card: Receita Total -->
+    <div class="card-item">
+      <p-card header="💰 Receita Total" styleClass="custom-card">
+        <h2 class="stat-value">{{ dashboardData?.receitaTotal }}</h2>
+      </p-card>
+    </div>
+
+    <!-- Card: Funcionário com Mais Serviços -->
+    <div class="card-item">
+      <p-card header="👨‍🔧 Funcionário com Mais Serviços" styleClass="custom-card">
+        <h2 class="stat-value">{{ dashboardData?.funcionarioComMaisServicos || 'N/A' }}</h2>
+      </p-card>
+    </div>
+
+    <!-- Card: Peça Mais Vendida -->
+    <div class="card-item">
+      <p-card header="🛠️ Peça Mais Vendida" styleClass="custom-card">
+        <h2 class="stat-value">{{ dashboardData?.pecaMaisVendida || 'N/A' }}</h2>
+      </p-card>
+    </div>
+
+    <!-- Card: Serviço Mais Solicitado -->
+    <div class="card-item">
+      <p-card header="🔧 Serviço Mais Solicitado" styleClass="custom-card">
+        <h3 class="stat-value">{{ dashboardData?.servicoMaisSolicitado || 'N/A' }}</h3>
+      </p-card>
+    </div>
+
+    <!-- Card: Cliente com Mais Ordens -->
+    <div class="card-item">
+      <p-card header="👤 Cliente com Mais Ordens" styleClass="custom-card">
+        <h3 class="stat-value">{{ dashboardData?.clienteComMaisOrdensDeServico || 'N/A' }}</h3>
+      </p-card>
+    </div>
+
+    <!-- Card: Veículo Mais Atendido -->
+    <div class="card-item">
+      <p-card header="🚗 Veículo Mais Atendido" styleClass="custom-card">
+        <h3 class="stat-value">{{ dashboardData?.veiculoMaisAtendido || 'N/A' }}</h3>
+      </p-card>
+    </div>
+  </div>
+</div>

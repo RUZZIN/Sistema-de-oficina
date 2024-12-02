@@ -1,0 +1,38 @@
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas por linha */
+    gap: 1.5rem; /* Espaçamento entre os itens */
+    width: 100%;
+  }
+  
+  .card-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .custom-card {
+    width: 100%;
+    max-width: 250px; /* Garantir quadrados */
+    aspect-ratio: 1 / 1; /* Mantém a proporção de um quadrado */
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  

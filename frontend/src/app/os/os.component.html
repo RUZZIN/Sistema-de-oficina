@@ -42,10 +42,11 @@
 
       <td>
         <p-button icon="pi pi-pencil" class="btn-edit" (onClick)="editOs(os,os.placaVeiculo.placa)"></p-button>
-        <p-button icon="pi pi-file-pdf" severity="danger" class="btn-pdf" (onClick)="generatePdf(os,os.placaVeiculo.placa)"></p-button>
+        <p-button icon="pi pi-file-pdf" severity="danger" class="btn-pdf"
+          (onClick)="generatePdf(os,os.placaVeiculo.placa)"></p-button>
       </td>
-      
-      
+
+
     </tr>
   </ng-template>
 
@@ -80,7 +81,8 @@
       <div class="quantidade-input-container">
         <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" />
       </div>
-
+      <button pButton icon="pi pi-trash" class="p-button-text" (click)="removeItemPeca(item)">
+      </button>
 
     </div>
 
@@ -103,17 +105,15 @@
           styleClass="funcionario-dropdown" [(ngModel)]="item.idFuncionario">
         </p-dropdown>
 
-
-        <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" /><br />
+        <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" />
+        <button pButton icon="pi pi-trash" class="p-button-text" (click)="removeItemServico(item)">
+        </button>
+        <br />
         Inicio
         <input type="time" [(ngModel)]="item.horarioInicio" class="" />
         Fim
         <input type="time" [(ngModel)]="item.horarioFim" class="" />
 
-        <div class="remove-button-container">
-          <button pButton icon="pi pi-trash" class="p-button-text" (click)="removeItemServico(item)">
-          </button>
-        </div>
       </div>
       <br />
       <button pButton label="Adicionar Serviço" icon="pi pi-plus" class="p-button-text"
@@ -189,18 +189,18 @@
         <p-dropdown [options]="funcionarios" optionLabel="nome" placeholder="Selecione um Funcionário"
           styleClass="funcionario-dropdown" [(ngModel)]="item.idFuncionario">
         </p-dropdown>
+  
 
-
-        <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" /><br />
+        <input type="number" [(ngModel)]="item.quantidade" class="quantidade-input" min="1" />       
+        <button pButton icon="pi pi-trash" class="p-button-text" (click)="removeItemServico(item)">
+        </button>
+        <br />
         Inicio
         <input type="time" [(ngModel)]="item.horarioInicio" class="" />
         Fim
         <input type="time" [(ngModel)]="item.horarioFim" class="" />
 
-        <div class="remove-button-container">
-          <button pButton icon="pi pi-trash" class="p-button-text" (click)="removeItemServico(item)">
-          </button>
-        </div>
+
       </div>
       <br />
       <button pButton label="Adicionar Serviço" icon="pi pi-plus" class="p-button-text"
