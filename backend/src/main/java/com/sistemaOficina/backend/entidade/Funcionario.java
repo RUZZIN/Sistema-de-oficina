@@ -21,8 +21,4 @@ public class Funcionario {
     private String cargo;
     private String endereco;
     private String telefone;
-    private String email;
-    private String cpf;
-    private String rg;
-    private String situacao;
 }

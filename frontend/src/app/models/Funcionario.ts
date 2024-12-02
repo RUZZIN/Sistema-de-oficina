@@ -8,8 +8,4 @@ export interface Funcionario {
   cargo: string;
   endereco: string;
   telefone: string;
-  email: string;
-  cpf: string;
-  rg: string;
-  situacao: string;
 }

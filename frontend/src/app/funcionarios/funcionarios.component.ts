@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -13,88 +15,99 @@ import { ConfirmationService } from 'primeng/api';
 import { FuncionariosService } from '../../services/funcionario.service';
 import { Funcionario } from '../models/Funcionario';
 import { ToolbarModule } from 'primeng/toolbar';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-funcionarios',
   standalone: true,
   template: `
     <p-toast></p-toast>
-    <p-confirmDialog></p-confirmDialog>
+<p-confirmDialog></p-confirmDialog>
 
-    <div class="card">
-      <p-toolbar>
-        <div class="p-toolbar-group-left">
-          <button pButton type="button" label="Novo Funcionário" icon="pi pi-plus" class="p-button-success" (click)="openNew()"></button>
-        </div>
-      </p-toolbar>
-
-      <p-table [value]="funcionarios" [paginator]="true" [rows]="10" responsiveLayout="scroll">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Nome</th>
-            <th>Salário</th>
-            <th>Cargo</th>
-            <th>Telefone</th>
-            <th>Ações</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-funcionario>
-          <tr>
-            <td>{{ funcionario.nome }}</td>
-            <td>{{ funcionario.salario | currency: 'BRL' }}</td>
-            <td>{{ funcionario.cargo }}</td>
-            <td>{{ funcionario.telefone }}</td>
-            <td>
-              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editFuncionario(funcionario)"></button>
-              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteFuncionario(funcionario)"></button>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+<div class="card">
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <button pButton type="button" label="Novo Funcionário" icon="pi pi-plus" class="p-button-success" (click)="openDialog()"></button>
     </div>
+  </p-toolbar>
 
-    <p-dialog
+  <p-table [value]="funcionarios" [paginator]="true" [rows]="10" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nome</th>
+        <th>Salário</th>
+        <th>Cargo</th>
+        <th>Telefone</th>
+        <th>Ações</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-funcionario>
+      <tr>
+        <td>{{ funcionario.nome }}</td>
+        <td>{{ funcionario.salario | currency: 'BRL' }}</td>
+        <td>{{ funcionario.cargo }}</td>
+        <td>{{ funcionario.telefone }}</td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editFuncionario(funcionario)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteFuncionario(funcionario.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
   [(visible)]="funcionarioDialog"
   [modal]="true"
   [style]="{ width: '450px' }"
   header="Detalhes do Funcionário"
   [closable]="false"
 >
-  <div class="p-fluid">
-    <div class="field">
-      <label for="nome">Nome</label>
-      <input id="nome" type="text" pInputText [(ngModel)]="funcionario.nome" required />
+  <form [formGroup]="funcionarioForm" (ngSubmit)="saveFuncionario()">
+    <div class="p-fluid">
+      <div class="field">
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" pInputText formControlName="nome" required />
+      </div>
+      <div class="field">
+        <label for="salario">Salário</label>
+        <p-inputNumber
+          id="salario"
+          formControlName="salario"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+        ></p-inputNumber>
+      </div>
+      <div class="field">
+        <label for="cargo">Cargo</label>
+        <input id="cargo" type="text" pInputText formControlName="cargo" />
+      </div>
+      <div class="field">
+        <label for="telefone">Telefone</label>
+        <input id="telefone" type="text" pInputText formControlName="telefone" />
+      </div>
+      <div class="field">
+        <label for="dataNascimento">Data de Nascimento</label>
+        <p-calendar id="dataNascimento" formControlName="dataNascimento" dateFormat="yy-mm-dd"></p-calendar>
+      </div>
+      <div class="field">
+        <label for="dataAdmissao">Data de Admissão</label>
+        <p-calendar id="dataAdmissao" formControlName="dataAdmissao" dateFormat="yy-mm-dd"></p-calendar>
+      </div>
+      <div class="field">
+        <label for="dataDemissao">Data de Demissão</label>
+        <p-calendar id="dataDemissao" formControlName="dataDemissao" dateFormat="yy-mm-dd"></p-calendar>
+      </div>
     </div>
-    <div class="field">
-      <label for="salario">Salário</label>
-      <input id="salario" type="number" pInputText [(ngModel)]="funcionario.salario" required />
-    </div>
-    <div class="field">
-      <label for="cargo">Cargo</label>
-      <input id="cargo" type="text" pInputText [(ngModel)]="funcionario.cargo" />
-    </div>
-    <div class="field">
-      <label for="telefone">Telefone</label>
-      <input id="telefone" type="text" pInputText [(ngModel)]="funcionario.telefone" />
-    </div>
-    <div class="field">
-      <label for="dataNascimento">Data de Nascimento</label>
-      <p-calendar id="dataNascimento" [(ngModel)]="funcionario.dataNascimento" dateFormat="yy-mm-dd"></p-calendar>
-    </div>
-    <div class="field">
-      <label for="dataAdmissao">Data de Admissão</label>
-      <p-calendar id="dataAdmissao" [(ngModel)]="funcionario.dataAdmissao" dateFormat="yy-mm-dd"></p-calendar>
-    </div>
-    <div class="field">
-      <label for="dataDemissao">Data de Demissão</label>
-      <p-calendar id="dataDemissao" [(ngModel)]="funcionario.dataDemissao" dateFormat="yy-mm-dd"></p-calendar>
-    </div>
-  </div>
-  <p-footer>
-    <button pButton type="button" label="Cancelar" icon="pi pi-times" (click)="hideDialog()" class="p-button-text"></button>
-    <button pButton type="button" label="Salvar" icon="pi pi-check" (click)="saveFuncionario()" [disabled]="!funcionario.nome"></button>
-  </p-footer>
+    <p-footer>
+      <button pButton type="button" label="Cancelar" icon="pi pi-times" (click)="closeDialog()" class="p-button-text"></button>
+      <button pButton type="submit" label="Salvar" icon="pi pi-check" [disabled]="funcionarioForm.invalid"></button>
+    </p-footer>
+  </form>
 </p-dialog>
+
 
 
     
@@ -110,35 +123,36 @@ import { ToolbarModule } from 'primeng/toolbar';
     InputTextModule,
     CalendarModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    InputNumberModule,
+    ReactiveFormsModule
   ],
   providers: [MessageService, ConfirmationService]
 })
 export class FuncionariosComponent implements OnInit {
   funcionarios: Funcionario[] = [];
+  funcionarioForm: FormGroup;
   funcionarioDialog: boolean = false;
-  funcionario: Funcionario = {
-    id: 0,
-    nome: '',
-    salario: 0,
-    dataNascimento: '',
-    dataAdmissao: '',
-    dataDemissao: '',
-    cargo: '',
-    endereco: '',
-    telefone: '',
-    email: '',
-    cpf: '',
-    rg: '',
-    situacao: ''
-  };  
-  submitted: boolean = false;
+  editMode: boolean = false;
+  selectedFuncionarioId?: number;
 
   constructor(
     private funcionariosService: FuncionariosService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
+    private confirmationService: ConfirmationService,
+    private formBuilder: FormBuilder
+  ) {
+    this.funcionarioForm = this.formBuilder.group({
+      nome: [''],
+      salario: [0],
+      dataNascimento: [''],
+      dataAdmissao: [''],
+      dataDemissao: [''],
+      cargo: [''],
+      endereco: [''],
+      telefone: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.listarFuncionarios();
@@ -147,114 +161,81 @@ export class FuncionariosComponent implements OnInit {
   listarFuncionarios(): void {
     this.funcionariosService.getFuncionarios().subscribe(
       (data) => (this.funcionarios = data),
-      (error) => console.error(error)
+      (error) => console.error('Erro ao carregar funcionários:', error)
     );
   }
 
-  openNew(): void {
-      this.funcionario = {
-          id: 0,
-          nome: '',
-          salario: 0,
-          dataNascimento: '',
-          dataAdmissao: '',
-          dataDemissao: '',
-          cargo: '',
-          endereco: '',
-          telefone: '',
-          email: '',
-          cpf: '',
-          rg: '',
-          situacao: ''
-      };
-      this.submitted = false;
-      this.funcionarioDialog = true;
-  }
-
-  editFuncionario(funcionario: Funcionario): void {
-    this.funcionario = { ...funcionario };
+  openDialog(): void {
+    this.editMode = false;
+    this.funcionarioForm.reset();
     this.funcionarioDialog = true;
   }
 
-  deleteFuncionario(funcionario: Funcionario): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza de que deseja excluir ${funcionario.nome}?`,
-      header: 'Confirmação',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        if (funcionario.id) {
-          this.funcionariosService.deleteFuncionario(funcionario.id).subscribe(() => {
-            this.listarFuncionarios();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Funcionário excluído',
-              life: 3000
-            });
-          });
-        }
-      }
-    });
-  }
-
   saveFuncionario(): void {
-    this.submitted = true;
-  
-    // Se o nome e o salário estão presentes, podemos continuar
-    if (this.funcionario.nome && this.funcionario.salario) {
-      // Garantir que as datas estejam no formato correto
-      this.funcionario.dataNascimento = this.funcionario.dataNascimento || "";
-      this.funcionario.dataAdmissao = this.funcionario.dataAdmissao || "";
-      this.funcionario.dataDemissao = this.funcionario.dataDemissao || "";
-  
-      if (this.funcionario.id) {
-        // Atualizar o funcionário no backend
-        this.funcionariosService.updateFuncionario(this.funcionario.id, this.funcionario).subscribe(() => {
+    const funcionarioFormValue = this.funcionarioForm.value;
+
+    const funcionario: Funcionario = {
+      ...funcionarioFormValue,
+    };
+
+    if (this.editMode) {
+      this.funcionariosService.updateFuncionario(this.selectedFuncionarioId!, funcionario).subscribe({
+        next: () => {
           this.listarFuncionarios();
+          this.closeDialog();
           this.messageService.add({
             severity: 'success',
             summary: 'Sucesso',
             detail: 'Funcionário atualizado',
             life: 3000
           });
-        });
-      } else {
-        // Adicionar novo funcionário
-        this.funcionariosService.addFuncionario(this.funcionario).subscribe(() => {
+        },
+        error: (err) => console.error('Erro ao atualizar funcionário:', err)
+      });
+    } else {
+      this.funcionariosService.addFuncionario(funcionario).subscribe({
+        next: () => {
           this.listarFuncionarios();
+          this.closeDialog();
           this.messageService.add({
             severity: 'success',
             summary: 'Sucesso',
             detail: 'Funcionário criado',
             life: 3000
           });
-        });
-      }
-  
-      // Fechar o diálogo após a operação
-      this.funcionarioDialog = false;
-      // Resetar os campos do funcionário após salvar
-      this.funcionario = {
-        id: 0,
-        nome: '',
-        salario: 0,
-        dataNascimento: "",  // Alterado para null
-        dataAdmissao: "",    // Alterado para null
-        dataDemissao: "",    // Alterado para null
-        cargo: '',
-        endereco: '',
-        telefone: '',
-        email: '',
-        cpf: '',
-        rg: '',
-        situacao: ''
-      };
+        },
+        error: (err) => console.error('Erro ao adicionar funcionário:', err)
+      });
     }
   }
-  
 
-  hideDialog(): void {
+  editFuncionario(funcionario: Funcionario): void {
+    this.editMode = true;
+    this.selectedFuncionarioId = funcionario.id;
+    this.funcionarioForm.patchValue(funcionario);
+    this.funcionarioDialog = true;
+  }
+
+  deleteFuncionario(id: number): void {
+    this.confirmationService.confirm({
+      message: 'Tem certeza de que deseja excluir este funcionário?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.funcionariosService.deleteFuncionario(id).subscribe(() => {
+          this.listarFuncionarios();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Funcionário excluído',
+            life: 3000
+          });
+        });
+      }
+    });
+  }
+
+  closeDialog(): void {
     this.funcionarioDialog = false;
-    this.submitted = false;
   }
 }

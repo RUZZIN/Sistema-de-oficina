@@ -36,6 +36,7 @@ import { Cliente } from '../models/Cliente';
 import { ClienteService } from '../../services/cliente.service';
 import { jsPDF } from 'jspdf';
 
+
 @Component({
   selector: 'app-ordem-servico',
   templateUrl: './os.component.html',
@@ -152,74 +153,137 @@ export class OsComponent implements OnInit {
       console.error('Cliente ou número de ordem de serviço não encontrado');
       return;
     }
-
+  
     const cliente$ = this.clienteService.getClienteById(ordemServico.cliente.id);
     const veiculo$ = this.veiculoService.getVeiculoById(placa);
     const itensPeca$ = this.osService.getItensPecaByOs(ordemServico.numero);
     const itensServico$ = this.osService.getItensServicoByOs(ordemServico.numero);
-
+  
     forkJoin([cliente$, veiculo$, itensPeca$, itensServico$]).subscribe(
-      ([clienteRes, veiculoRes, itensPecaRes, itensServicoRes]: [Cliente, Veiculo, ItensPeca[], ItensServico[]]) => {
+      ([clienteRes, veiculoRes, itensPecaRes, itensServicoRes]) => {
         this.selectedCliente = clienteRes;
-        this.selectedVeiculo = veiculoRes;
-        this.itensPeca = itensPecaRes;
-        this.itensServico = itensServicoRes;
+        this.selectedVeiculo = veiculoRes; // Todos os dados do veículo já estarão carregados aqui
+        this.itensPeca = itensPecaRes || [];
+        this.itensServico = itensServicoRes || [];
+  
+        // Gera o PDF com os dados carregados
         this.generatePdfDocument(ordemServico);
       },
-      error => console.error('Erro ao carregar os dados:', error)
+      error => {
+        console.error('Erro ao carregar os dados:', error);
+      }
     );
   }
-
+  
   generatePdfDocument(ordemServico: OrdemServico) {
     const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('Ordem de Serviço', 14, 20);
-
+  
+    // Cabeçalho
+    doc.setFontSize(10);
+    doc.text('MECANICA AutoGyn', 14, 10);
+    doc.text('RUA 222 QD 98 LT 46', 14, 15);
+    doc.text('Próximo à Paróquia São Francisco de Assis', 14, 20);
+    doc.text('62 3095-1614 / 3092-8775', 14, 25);
+    doc.text('mecanicautogyn17@gmail.com', 14, 30);
+    doc.text(`GOIANIA, ${new Date().toLocaleDateString()}`, 14, 35);
+  
+    // Título e Ordem de Serviço
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Orçamento da Ordem de Serviço', 14, 45);
     doc.setFontSize(12);
-    doc.text(`Número da Ordem de Serviço: ${ordemServico.numero}`, 14, 30);
-    doc.text(`Status: ${ordemServico.status}`, 14, 40);
-
+    doc.text(`Nº ${ordemServico.numero}`, 14, 50);
+  
     // Informações do Cliente
-    doc.text('Cliente:', 14, 50);
-    doc.text(`Nome: ${this.selectedCliente?.nome || 'N/A'}`, 14, 60);
-    doc.text(`Endereço: ${this.selectedCliente?.logradouro}, ${this.selectedCliente?.numero}`, 14, 70);
-    doc.text(`Email: ${this.selectedCliente?.email || 'N/A'}`, 14, 80);
-    doc.text(`Telefone: ${this.selectedCliente?.numero1 || 'N/A'}`, 14, 90);
-
+    let yPosition = 60; // Início da seção de cliente
+    doc.setFontSize(10);
+    doc.text('Cliente:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    yPosition += 5;
+    doc.text(`Nome: ${this.selectedCliente?.nome || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(
+      `Endereço: ${this.selectedCliente?.logradouro}, ${this.selectedCliente?.numero}, ${this.selectedCliente?.cidade}, ${this.selectedCliente?.estado}`,
+      14,
+      yPosition
+    );
+    yPosition += 5;
+    if (this.selectedCliente?.cpf) {
+      doc.text(`CPF: ${this.selectedCliente.cpf}`, 14, yPosition);
+    } else if (this.selectedCliente?.cnpj) {
+      doc.text(`CNPJ: ${this.selectedCliente.cnpj}`, 14, yPosition);
+    } else {
+      doc.text(`CPF/CNPJ: N/A`, 14, yPosition);
+    }
+    yPosition += 5;
+    doc.text(`Telefone: ${this.selectedCliente?.numero1 || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Email: ${this.selectedCliente?.email || 'N/A'}`, 14, yPosition);
+  
     // Informações do Veículo
-    doc.text('Veículo:', 14, 100);
-    doc.text(`Placa: ${this.selectedVeiculo?.placa}`, 14, 110);
-    doc.text(`Quilometragem: ${this.selectedVeiculo?.quilometragem}`, 14, 120);
-    doc.text(`Modelo: ${this.selectedVeiculo?.idModelo?.nome || 'N/A'}`, 14, 130);
-
-    // Itens de Peças
-    doc.text('Itens de Peças:', 14, 140);
-    let yPosition = 150;
-    this.itensPeca.forEach(item => {
+    yPosition += 10; // Espaço entre cliente e veículo
+    doc.setFont('helvetica', 'bold');
+    doc.text('Veículo:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    yPosition += 5;
+    doc.text(`Modelo: ${this.selectedVeiculo?.idModelo?.nome || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Marca: ${this.selectedVeiculo?.marca || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Placa: ${this.selectedVeiculo?.placa || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Quilometragem: ${this.selectedVeiculo?.quilometragem || 'N/A'} km`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Chassi: ${this.selectedVeiculo?.chassi || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Patrimônio: ${this.selectedVeiculo?.patrimonio || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Ano Modelo: ${this.selectedVeiculo?.anoModelo || 'N/A'}`, 14, yPosition);
+    yPosition += 5;
+    doc.text(`Ano Fabricação: ${this.selectedVeiculo?.anoFabricacao || 'N/A'}`, 14, yPosition);
+  
+    // Tabela de Peças
+    yPosition += 10; // Espaço entre veículo e peças
+    doc.setFont('helvetica', 'bold');
+    doc.text('Peças a Substituir:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    yPosition += 5;
+    this.itensPeca.forEach((item, index) => {
       doc.text(
-        `Peça: ${item.idPeca?.nome || 'N/A'} - Quantidade: ${item.quantidade} - Preço Total: R$ ${item.precoTotal}`,
-        14, yPosition
+        `${index + 1}. ${item.idPeca?.nome || 'N/A'} - Qtd: ${item.quantidade} - R$ ${item.precoTotal}`,
+        14,
+        yPosition
       );
-      yPosition += 10;
+      yPosition += 5;
     });
-
-    // Itens de Serviços
-    doc.text('Itens de Serviços:', 14, yPosition + 10);
-    yPosition += 20;
-    this.itensServico.forEach(item => {
+  
+    // Tabela de Serviços
+    yPosition += 10; // Espaço entre peças e serviços
+    doc.setFont('helvetica', 'bold');
+    doc.text('Serviços a Executar:', 14, yPosition);
+    doc.setFont('helvetica', 'normal');
+    yPosition += 5;
+    this.itensServico.forEach((item, index) => {
       doc.text(
-        `Serviço: ${item.idServico?.nome || 'N/A'} - Quantidade: ${item.quantidade} - Preço Total: R$ ${item.precoTotal}`,
-        14, yPosition
+        `${index + 1}. ${item.idServico?.nome || 'N/A'} - R$ ${item.precoTotal}`,
+        14,
+        yPosition
       );
-      yPosition += 10;
+      yPosition += 5;
     });
-
-    // Calcular e adicionar o total
-    const total = this.calcularTotal();
-    doc.text(`Total: R$ ${total}`, 14, yPosition + 10);
-
+  
+    // Totais
+    yPosition += 10; // Espaço antes dos totais
+    doc.setFontSize(12);
+    yPosition += 10;
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Total: R$ ${this.calcularTotal()}`, 14, yPosition);
+  
+    // Salvar o PDF
     doc.save(`Ordem_Servico_${ordemServico.numero}.pdf`);
   }
+  
+  
 
 
   

@@ -32,7 +32,13 @@
       </div>
       <div class="p-field">
         <label for="precoUnitario">Preço Unitário</label>
-        <input id="precoUnitario" type="number" pInputText [(ngModel)]="servicoSelecionado.precoUnitario" />
+        <p-inputNumber
+            id="preco"
+            [(ngModel)]="servicoSelecionado.precoUnitario"
+            mode="currency"
+            currency="BRL"
+            locale="pt-BR"
+          ></p-inputNumber>
       </div>
     </div>
     <p-footer>
