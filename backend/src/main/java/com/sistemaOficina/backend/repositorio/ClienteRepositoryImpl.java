@@ -71,7 +71,7 @@ public class ClienteRepositoryImpl {
     // Buscar todos os clientes
     public List<Cliente> buscarTodos() {
         List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM cliente";
+        String sql = "SELECT * FROM cliente ORDER BY nome ASC"; // Ordenação alfabética
 
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement();

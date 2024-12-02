@@ -91,7 +91,7 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
     @Override
     public List<Funcionario> buscarTodos() {
         List<Funcionario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM funcionario";
+        String sql = "SELECT * FROM funcionario ORDER BY nome ASC"; // Ordenação alfabética
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

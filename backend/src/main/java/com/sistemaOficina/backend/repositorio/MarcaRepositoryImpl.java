@@ -45,7 +45,7 @@ public class MarcaRepositoryImpl implements MarcaRepository {
 
     @Override
     public List<Marca> buscarTodos() {
-        String sql = "SELECT * FROM marca";
+        String sql = "SELECT * FROM marca ORDER BY nome ASC"; // Ordenação alfabética
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Marca(
                 rs.getLong("id"),
                 rs.getString("nome")

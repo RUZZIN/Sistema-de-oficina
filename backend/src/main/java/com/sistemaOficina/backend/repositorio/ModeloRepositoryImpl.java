@@ -78,7 +78,7 @@ public class ModeloRepositoryImpl implements ModeloRepository {
     @Override
     public List<Modelo> buscarTodos() {
         List<Modelo> modelo = new ArrayList<>();
-        String sql = "SELECT * FROM modelo";
+        String sql = "SELECT * FROM modelo ORDER BY nome ASC"; // Ordenação alfabética
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

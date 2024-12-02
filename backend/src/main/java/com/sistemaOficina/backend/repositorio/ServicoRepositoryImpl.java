@@ -96,7 +96,7 @@ public class ServicoRepositoryImpl implements ServicoRepository {
 
     @Override
     public List<Servico> buscarTodos() {
-        String sql = "SELECT * FROM servico";
+        String sql = "SELECT * FROM servico ORDER BY nome ASC"; // Ordena os serviços pelo nome em ordem alfabética crescente
         List<Servico> servicos = new ArrayList<>();
 
         try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {

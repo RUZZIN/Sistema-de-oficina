@@ -87,7 +87,7 @@ public class PecasRepositoryImpl implements PecasRepository {
     @Override
     public List<Pecas> buscarTodos() {
         List<Pecas> lista = new ArrayList<>();
-        String sql = "SELECT * FROM peca";
+        String sql = "SELECT * FROM peca ORDER BY nome ASC"; // Ordena os registros pelo nome em ordem crescente
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

@@ -176,7 +176,7 @@ public void atualizar(OrdemServico ordemServico) {
 
     @Override
     public List<OrdemServico> buscarTodos() {
-        String sql = "SELECT * FROM ordem_servico";
+        String sql = "SELECT * FROM ordem_servico ORDER BY numero ASC";
         List<OrdemServico> listaOrdemDeServico = new ArrayList<>();
 
         try (Connection connection = getConnection(); 

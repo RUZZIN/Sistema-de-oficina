@@ -98,7 +98,7 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     @Override
     public List<Veiculo> buscarTodos() {
         List<Veiculo> veiculos = new ArrayList<>();
-        String sql = "SELECT * FROM veiculo";
+        String sql = "SELECT * FROM veiculo ORDER BY placa ASC"; // Ordena pela placa em ordem alfabética crescente
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

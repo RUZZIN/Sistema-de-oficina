@@ -78,7 +78,7 @@ public class AcessorioRepositoryImpl implements AcessorioRepository {
     @Override
     public List<Acessorio> buscarTodos() {
         List<Acessorio> lista = new ArrayList<>();
-        String sql = "SELECT * FROM acessorio";
+        String sql = "SELECT * FROM acessorio ORDER BY nome ASC"; // Ordenação alfabética
         try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
