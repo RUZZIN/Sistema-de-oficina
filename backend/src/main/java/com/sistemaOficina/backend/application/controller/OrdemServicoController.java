@@ -4,10 +4,8 @@ import com.sistemaOficina.backend.application.dto.OrdemServicoRequest;
 
 import com.sistemaOficina.backend.core.entidade.*;
 import com.sistemaOficina.backend.infrastructure.persistence.ClienteRepositoryImpl;
-import com.sistemaOficina.backend.infrastructure.persistence.FuncionarioRepositoryImpl;
 import com.sistemaOficina.backend.infrastructure.persistence.ItensPecaRepositoryImpl;
 import com.sistemaOficina.backend.infrastructure.persistence.ItensServicoRepositoryImpl;
-import com.sistemaOficina.backend.infrastructure.persistence.OrdemServicoRepositoryImpl;
 import com.sistemaOficina.backend.infrastructure.repository.FuncionarioRepository;
 import com.sistemaOficina.backend.infrastructure.repository.OrdemServicoRepository;
 import com.sistemaOficina.backend.infrastructure.repository.PecasRepository;
@@ -31,8 +29,6 @@ public class OrdemServicoController {
     @Autowired
     private OrdemServicoRepository ordemServicoRepository;
 
-    @Autowired
-    private OrdemServicoRepositoryImpl ordemServicoRepositoryImpl;
 
     @Autowired
     private ItensPecaRepositoryImpl itensPecaRepository;
@@ -62,7 +58,7 @@ public void salvar(@RequestBody OrdemServicoRequest request) {
     double precoTotal = 0;
 
     // Gerar número da Ordem de Serviço
-    Long ultimoNumero = ordemServicoRepositoryImpl.buscarUltimoNumeroOs();
+    Long ultimoNumero = ordemServicoRepository.buscarUltimoNumeroOs();
     Long numero = (ultimoNumero != null) ? ultimoNumero + 1 : 1;
 
     // Validar e buscar Veículo e Cliente
@@ -85,7 +81,7 @@ public void salvar(@RequestBody OrdemServicoRequest request) {
             veiculo,
             cliente
     );
-    ordemServicoRepositoryImpl.salvar(ordemServico);
+    ordemServicoRepository.salvar(ordemServico);
 
     if (ordemServico.getNumero() == null) {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Falha ao salvar a ordem de serviço");
@@ -195,7 +191,7 @@ private double processarItensServico(List<ItensServico> itensServicoList, OrdemS
             
             
             // Recuperar a quantidade previamente usada na OS (se existir)
-            int quantidadeAnterior = ordemServicoRepositoryImpl.buscarQuantidadePorPecaEOrdemServico(
+            int quantidadeAnterior = ordemServicoRepository.buscarQuantidadePorPecaEOrdemServico(
                 ordemServico.getNumero(),
                 itensPecaRequest.getIdPeca().getId()
             );

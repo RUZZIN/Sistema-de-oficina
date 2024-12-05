@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sistemaOficina.backend.core.entidade.Acessorio;
 import com.sistemaOficina.backend.infrastructure.repository.AcessorioRepository;
-import com.sistemaOficina.backend.core.entidade.*;
 
 import java.util.List;
 

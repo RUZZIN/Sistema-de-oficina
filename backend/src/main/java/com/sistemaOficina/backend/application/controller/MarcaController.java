@@ -13,9 +13,9 @@ import java.util.List;
 @RequestMapping("/api/marcas")
 public class MarcaController {
 
+    @Autowired
     private final MarcaRepository marcaRepository;
 
-    @Autowired
     public MarcaController(MarcaRepository marcaRepository) {
         this.marcaRepository = marcaRepository;
     }
