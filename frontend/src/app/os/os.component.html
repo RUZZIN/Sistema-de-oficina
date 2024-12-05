@@ -21,7 +21,7 @@
   <ng-template pTemplate="body" let-os>
     <tr>
       <td>{{ os.numero }}</td>
-      <td>{{ os.placaVeiculo.idModelo.nome }}</td>
+      <td>{{ os.placaVeiculo.idModelo.nome }} - {{ os.placaVeiculo.placa }}</td>
       <td>{{ os.placaVeiculo.placa }}</td>
       <td>{{ os.precoFinal | currency: 'BRL' }}</td>
       <td>
@@ -216,7 +216,7 @@
   <br />
   <div class="field">
     <label for="precoFinal"><b>Preço Final: </b></label>
-    <label for="precoFinal">{{ calcularTotal() | currency }}</label>
+    <label for="precoFinal">{{ ordemServico.precoFinal| currency }}</label>
   </div>
 
 

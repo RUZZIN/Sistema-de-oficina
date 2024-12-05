@@ -175,6 +175,8 @@ export class OsComponent implements OnInit {
     );
   }
   
+  
+
   generatePdfDocument(ordemServico: OrdemServico) {
     const doc = new jsPDF();
   
@@ -193,6 +195,11 @@ export class OsComponent implements OnInit {
     doc.text('Orçamento da Ordem de Serviço', 14, 45);
     doc.setFontSize(12);
     doc.text(`Nº ${ordemServico.numero}`, 14, 50);
+  
+    // Adicionar Status
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Status:'+ this.ordemServico.status, 14, 55);
   
     // Informações do Cliente
     let yPosition = 60; // Início da seção de cliente
@@ -277,7 +284,7 @@ export class OsComponent implements OnInit {
     doc.setFontSize(12);
     yPosition += 10;
     doc.setFont('helvetica', 'bold');
-    doc.text(`Total: R$ ${this.calcularTotal()}`, 14, yPosition);
+    doc.text(`Total: R$ ${this.ordemServico.precoFinal}`, 14, yPosition);
   
     // Salvar o PDF
     doc.save(`Ordem_Servico_${ordemServico.numero}.pdf`);
@@ -360,7 +367,9 @@ export class OsComponent implements OnInit {
   
   editOs(ordemServico: OrdemServico, placa: string) {
     this.ordemServico = { ...ordemServico };
-
+    this.itensPeca = [];
+    this.itensServico = [];
+    
     const idCliente = ordemServico.cliente?.id;
     if (!idCliente) {
       console.error('Cliente não encontrado na ordem de serviço');
@@ -392,6 +401,7 @@ export class OsComponent implements OnInit {
     // Carregar os itens de peça da ordem de serviço
     if (this.ordemServico.numero) {
       this.osService.getItensPecaByOs(this.ordemServico.numero).subscribe((data) => {
+        console.log("data:"+data);
         this.itensPeca = data.map((item) => ({
           id: item.id,
           quantidade: item.quantidade,
@@ -406,6 +416,8 @@ export class OsComponent implements OnInit {
     // Carregar os itens de serviço da ordem de serviço
     if (this.ordemServico.numero) {
       this.osService.getItensServicoByOs(this.ordemServico.numero).subscribe((itensServico) => {
+        console.log("itensServico:"+itensServico);
+
         this.itensServico = itensServico.map((item) => ({
           id: item.id,
           horarioInicio: item.horarioInicio,
@@ -577,7 +589,6 @@ export class OsComponent implements OnInit {
       }
     });
   
-    // Retorna o preço total acumulado
     return totalPecas + totalServicos;
   }
   
