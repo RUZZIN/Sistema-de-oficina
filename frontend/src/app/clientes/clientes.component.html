@@ -1,23 +1,27 @@
-<div class="card">
+<h1 class="text-center text-2xl font-bold my-4">Cliente</h1>
+
+
+<div class="">
   <p-toast></p-toast>
-  <p-toolbar styleClass="mb-4 gap-2">
-    <ng-template pTemplate="left">
+  <div class="grid">
+    <div class="col-13" style="display: flex; justify-content: flex-end; margin:10px; margin-right: 16px;">
       <p-button
-        severity="success"
-        label="Novo"
-        icon="pi pi-plus"
-        class="mr-2"
-        (onClick)="abrirNovo()"
-      ></p-button>
-      <p-button
-        severity="danger"
-        label="Excluir"
-        icon="pi pi-trash"
-        (onClick)="deletarClientesSelecionados()"
-        [disabled]="!selectedClientes || !selectedClientes.length"
-      ></p-button>
-    </ng-template>
-  </p-toolbar>
+      
+      label="Adicionar"
+      icon="pi pi-plus"
+      class="mr-2"
+      (onClick)="abrirNovo()"
+    ></p-button>
+    <p-button
+      severity="danger"
+      label="Excluir"
+      icon="pi pi-trash"
+      (onClick)="deletarClientesSelecionados()"
+      [disabled]="!selectedClientes || !selectedClientes.length"
+    ></p-button>
+</div>
+</div>
+
 
   <p-table
     #dt

@@ -1,8 +1,7 @@
 package com.sistemaOficina.backend.application.controller;
 
 import com.sistemaOficina.backend.application.dto.OrdemServicoRequest;
-
-import com.sistemaOficina.backend.core.entidade.*;
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.persistence.ClienteRepositoryImpl;
 import com.sistemaOficina.backend.infrastructure.persistence.ItensPecaRepositoryImpl;
 import com.sistemaOficina.backend.infrastructure.persistence.ItensServicoRepositoryImpl;

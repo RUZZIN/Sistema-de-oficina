@@ -1,10 +1,11 @@
 package com.sistemaOficina.backend.application.dto;
 
-import com.sistemaOficina.backend.core.entidade.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
+
+import com.sistemaOficina.backend.core.entity.*;
 
 @Data
 @AllArgsConstructor

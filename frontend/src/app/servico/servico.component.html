@@ -1,6 +1,12 @@
 <!-- src/app/components/servico/servico.component.html -->
-<p-button label="Novo Serviço" icon="pi pi-plus" (click)="showDialogToAdd()"></p-button>
+<h1 class="text-center text-2xl font-bold my-4">Serviços</h1>
 
+<div class="grid">
+  <div class="col-13" style="display: flex; justify-content: flex-end; margin:10px; margin-right: 16px;">
+<p-button label="Adicionar" icon="pi pi-plus" (click)="showDialogToAdd()"></p-button>
+<span ></span>
+</div>
+</div>
 <p-table [value]="servicos" dataKey="id" selectionMode="single" [(selection)]="servicoSelecionado" [rows]="10" [paginator]="true">
     <ng-template pTemplate="header">
       <tr>
@@ -16,7 +22,7 @@
         <td>{{ servico.nome }}</td>
         <td>{{ servico.precoUnitario | currency }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" (click)="editarServico(servico)" class="p-button-rounded p-button-info"></button>
+          <button pButton icon="pi pi-pencil" severity="success" (click)="editarServico(servico)" class="p-button-rounded p-button-info"></button>
           <button pButton icon="pi pi-trash" (click)="deletarServico(servico.id)" class="p-button-rounded p-button-danger"></button>
         </td>
       </tr>

@@ -1,15 +1,18 @@
-package com.sistemaOficina.backend.core.entidade;
+package com.sistemaOficina.backend.core.entity;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class Servico {
+public class Pecas {
     private Long id;
+    private String codigo;
     private String nome;
     private double precoUnitario;
+    private int quantidade;
 
-    public Servico(Long id) {
+    public Pecas(Long id) {
         this.id = id;
     }
+
 }

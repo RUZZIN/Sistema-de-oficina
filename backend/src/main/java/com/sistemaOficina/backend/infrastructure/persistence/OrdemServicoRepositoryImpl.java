@@ -1,11 +1,10 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
-import com.sistemaOficina.backend.core.entidade.*;
-
 import com.sistemaOficina.backend.infrastructure.repository.OrdemServicoRepository;
 
 import org.springframework.stereotype.Repository;
 
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.*;
 
 import javax.sql.DataSource;

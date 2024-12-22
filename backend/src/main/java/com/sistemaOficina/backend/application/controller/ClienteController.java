@@ -1,7 +1,7 @@
 package com.sistemaOficina.backend.application.controller;
 
 
-import com.sistemaOficina.backend.core.entidade.*;
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.persistence.ClienteRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

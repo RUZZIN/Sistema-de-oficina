@@ -3,7 +3,7 @@ package com.sistemaOficina.backend.application.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.sistemaOficina.backend.core.entidade.Acessorio;
+import com.sistemaOficina.backend.core.entity.Acessorio;
 import com.sistemaOficina.backend.infrastructure.repository.AcessorioRepository;
 
 import java.util.List;

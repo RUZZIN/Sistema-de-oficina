@@ -1,6 +1,6 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
-import com.sistemaOficina.backend.core.entidade.*;
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.MarcaRepository;
 
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -22,95 +22,155 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'app-funcionarios',
   standalone: true,
   template: `
+    <h1 class="text-center text-2xl font-bold my-4">Funcionarios</h1>
+
     <p-toast></p-toast>
-<p-confirmDialog></p-confirmDialog>
+    <p-confirmDialog></p-confirmDialog>
 
-<div class="card">
-  <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <button pButton type="button" label="Novo Funcionário" icon="pi pi-plus" class="p-button-success" (click)="openDialog()"></button>
+    <div class="">
+      <div class="grid">
+        <div
+          class="col-13"
+          style="display: flex; justify-content: flex-end; margin: 10px;margin-right: 16px;"
+        >
+          <button
+            pButton
+            type="button"
+            label="Adicionar"
+            icon="pi pi-plus"
+            (click)="openDialog()"
+          ></button>
+        </div>
+      </div>
+
+      <p-table
+        [value]="funcionarios"
+        [paginator]="true"
+        [rows]="10"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nome</th>
+            <th>Salário</th>
+            <th>Cargo</th>
+            <th>Telefone</th>
+            <th>Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-funcionario>
+          <tr>
+            <td>{{ funcionario.nome }}</td>
+            <td>{{ funcionario.salario | currency : 'BRL' }}</td>
+            <td>{{ funcionario.cargo }}</td>
+            <td>{{ funcionario.telefone }}</td>
+            <td>
+              <button
+                pButton
+                icon="pi pi-pencil"
+                severity="success"
+                class="p-button-rounded p-button-success mr-2"
+                (click)="editFuncionario(funcionario)"
+              ></button>
+              <button
+                pButton
+                 severity="danger"
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-danger"
+                (click)="deleteFuncionario(funcionario.id)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
-  </p-toolbar>
 
-  <p-table [value]="funcionarios" [paginator]="true" [rows]="10" responsiveLayout="scroll">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Nome</th>
-        <th>Salário</th>
-        <th>Cargo</th>
-        <th>Telefone</th>
-        <th>Ações</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-funcionario>
-      <tr>
-        <td>{{ funcionario.nome }}</td>
-        <td>{{ funcionario.salario | currency: 'BRL' }}</td>
-        <td>{{ funcionario.cargo }}</td>
-        <td>{{ funcionario.telefone }}</td>
-        <td>
-          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editFuncionario(funcionario)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteFuncionario(funcionario.id)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
-
-<p-dialog
-  [(visible)]="funcionarioDialog"
-  [modal]="true"
-  [style]="{ width: '450px' }"
-  header="Detalhes do Funcionário"
-  [closable]="false"
->
-  <form [formGroup]="funcionarioForm" (ngSubmit)="saveFuncionario()">
-    <div class="p-fluid">
-      <div class="field">
-        <label for="nome">Nome</label>
-        <input id="nome" type="text" pInputText formControlName="nome" required />
-      </div>
-      <div class="field">
-        <label for="salario">Salário</label>
-        <p-inputNumber
-          id="salario"
-          formControlName="salario"
-          mode="currency"
-          currency="BRL"
-          locale="pt-BR"
-        ></p-inputNumber>
-      </div>
-      <div class="field">
-        <label for="cargo">Cargo</label>
-        <input id="cargo" type="text" pInputText formControlName="cargo" />
-      </div>
-      <div class="field">
-        <label for="telefone">Telefone</label>
-        <input id="telefone" type="text" pInputText formControlName="telefone" />
-      </div>
-      <div class="field">
-        <label for="dataNascimento">Data de Nascimento</label>
-        <p-calendar id="dataNascimento" formControlName="dataNascimento" dateFormat="yy-mm-dd"></p-calendar>
-      </div>
-      <div class="field">
-        <label for="dataAdmissao">Data de Admissão</label>
-        <p-calendar id="dataAdmissao" formControlName="dataAdmissao" dateFormat="yy-mm-dd"></p-calendar>
-      </div>
-      <div class="field">
-        <label for="dataDemissao">Data de Demissão</label>
-        <p-calendar id="dataDemissao" formControlName="dataDemissao" dateFormat="yy-mm-dd"></p-calendar>
-      </div>
-    </div>
-    <p-footer>
-      <button pButton type="button" label="Cancelar" icon="pi pi-times" (click)="closeDialog()" class="p-button-text"></button>
-      <button pButton type="submit" label="Salvar" icon="pi pi-check" [disabled]="funcionarioForm.invalid"></button>
-    </p-footer>
-  </form>
-</p-dialog>
-
-
-
-    
+    <p-dialog
+      [(visible)]="funcionarioDialog"
+      [modal]="true"
+      [style]="{ width: '450px' }"
+      header="Detalhes do Funcionário"
+      [closable]="false"
+    >
+      <form [formGroup]="funcionarioForm" (ngSubmit)="saveFuncionario()">
+        <div class="p-fluid">
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input
+              id="nome"
+              type="text"
+              pInputText
+              formControlName="nome"
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="salario">Salário</label>
+            <p-inputNumber
+              id="salario"
+              formControlName="salario"
+              mode="currency"
+              currency="BRL"
+              locale="pt-BR"
+            ></p-inputNumber>
+          </div>
+          <div class="field">
+            <label for="cargo">Cargo</label>
+            <input id="cargo" type="text" pInputText formControlName="cargo" />
+          </div>
+          <div class="field">
+            <label for="telefone">Telefone</label>
+            <input
+              id="telefone"
+              type="text"
+              pInputText
+              formControlName="telefone"
+            />
+          </div>
+          <div class="field">
+            <label for="dataNascimento">Data de Nascimento</label>
+            <p-calendar
+              id="dataNascimento"
+              formControlName="dataNascimento"
+              dateFormat="yy-mm-dd"
+            ></p-calendar>
+          </div>
+          <div class="field">
+            <label for="dataAdmissao">Data de Admissão</label>
+            <p-calendar
+              id="dataAdmissao"
+              formControlName="dataAdmissao"
+              dateFormat="yy-mm-dd"
+            ></p-calendar>
+          </div>
+          <div class="field">
+            <label for="dataDemissao">Data de Demissão</label>
+            <p-calendar
+              id="dataDemissao"
+              formControlName="dataDemissao"
+              dateFormat="yy-mm-dd"
+            ></p-calendar>
+          </div>
+        </div>
+        <p-footer>
+          <button
+            pButton
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            (click)="closeDialog()"
+            class="p-button-text"
+          ></button>
+          <button
+            pButton
+            type="submit"
+            label="Salvar"
+            icon="pi pi-check"
+            [disabled]="funcionarioForm.invalid"
+          ></button>
+        </p-footer>
+      </form>
+    </p-dialog>
   `,
   styleUrls: ['./funcionarios.component.css'],
   imports: [
@@ -125,9 +185,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     ToastModule,
     ConfirmDialogModule,
     InputNumberModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
 })
 export class FuncionariosComponent implements OnInit {
   funcionarios: Funcionario[] = [];
@@ -150,7 +210,7 @@ export class FuncionariosComponent implements OnInit {
       dataDemissao: [''],
       cargo: [''],
       endereco: [''],
-      telefone: ['']
+      telefone: [''],
     });
   }
 
@@ -179,19 +239,21 @@ export class FuncionariosComponent implements OnInit {
     };
 
     if (this.editMode) {
-      this.funcionariosService.updateFuncionario(this.selectedFuncionarioId!, funcionario).subscribe({
-        next: () => {
-          this.listarFuncionarios();
-          this.closeDialog();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Funcionário atualizado',
-            life: 3000
-          });
-        },
-        error: (err) => console.error('Erro ao atualizar funcionário:', err)
-      });
+      this.funcionariosService
+        .updateFuncionario(this.selectedFuncionarioId!, funcionario)
+        .subscribe({
+          next: () => {
+            this.listarFuncionarios();
+            this.closeDialog();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Funcionário atualizado',
+              life: 3000,
+            });
+          },
+          error: (err) => console.error('Erro ao atualizar funcionário:', err),
+        });
     } else {
       this.funcionariosService.addFuncionario(funcionario).subscribe({
         next: () => {
@@ -201,10 +263,10 @@ export class FuncionariosComponent implements OnInit {
             severity: 'success',
             summary: 'Sucesso',
             detail: 'Funcionário criado',
-            life: 3000
+            life: 3000,
           });
         },
-        error: (err) => console.error('Erro ao adicionar funcionário:', err)
+        error: (err) => console.error('Erro ao adicionar funcionário:', err),
       });
     }
   }
@@ -228,10 +290,10 @@ export class FuncionariosComponent implements OnInit {
             severity: 'success',
             summary: 'Sucesso',
             detail: 'Funcionário excluído',
-            life: 3000
+            life: 3000,
           });
         });
-      }
+      },
     });
   }
 

@@ -1,34 +1,19 @@
-<div class="card">
-  <p-toast></p-toast>
-  <p-toolbar styleClass="mb-4 gap-2">
-    <ng-template pTemplate="left">
-      <p-button
-        severity="success"
-        label="Novo"
-        icon="pi pi-plus"
-        class="mr-2"
-        (onClick)="openNew()"
-      ></p-button>
-      <p-button
-        severity="danger"
-        label="Excluir"
-        icon="pi pi-trash"
-        (onClick)="deleteSelectedPecas()"
-        [disabled]="!selectedPecas || !selectedPecas.length"
-      ></p-button>
-    </ng-template>
-  </p-toolbar>
+<h1 class="text-center text-2xl font-bold my-4">Estoque de peças</h1>
 
-  <p-table
-    #dt
-    [value]="pecas"
-    [rows]="10"
-    [paginator]="true"
-    [globalFilterFields]="['nome', 'codigo']"
-    [tableStyle]="{ 'min-width': '50rem' }"
-    [(selection)]="selectedPecas"
-    dataKey="id"
-  >
+
+<div class="">
+
+  <div class="grid">
+    <div class="col-13" style="display: flex; justify-content: flex-end; margin:10px; margin-right: 16px;">
+      <p-toast></p-toast>
+      <p-button  label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()"></p-button>
+      <p-button severity="danger" label="Excluir" icon="pi pi-trash" (onClick)="deleteSelectedPecas()"
+        [disabled]="!selectedPecas || !selectedPecas.length"></p-button>
+
+    </div>
+  </div>
+  <p-table #dt [value]="pecas" [rows]="10" [paginator]="true" [globalFilterFields]="['nome', 'codigo']"
+    [tableStyle]="{ 'min-width': '50rem' }" [(selection)]="selectedPecas" dataKey="id">
     <ng-template pTemplate="header">
       <tr>
         <th>
@@ -51,64 +36,32 @@
         <td>{{ peca.precoUnitario | currency : 'BRL' }}</td>
         <td>{{ peca.quantidade }}</td>
         <td>
-          <p-button
-            icon="pi pi-pencil"
-            severity="success"
-            [rounded]="true"
-            (onClick)="editPeca(peca)"
-          ></p-button>
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [rounded]="true"
-            (onClick)="deletePeca(peca)"
-          ></p-button>
+          <p-button icon="pi pi-pencil" severity="success" [rounded]="true" (onClick)="editPeca(peca)"></p-button>
+          <p-button icon="pi pi-trash" severity="danger" [rounded]="true" (onClick)="deletePeca(peca)"></p-button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
-  <p-dialog
-    [(visible)]="pecaDialog"
-    [style]="{ width: '450px' }"
-    header="Detalhes da Peça"
-    [modal]="true"
+  <p-dialog [(visible)]="pecaDialog" [style]="{ width: '450px' }" header="Detalhes da Peça" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
       <div class="field">
         <label for="nome">Nome</label>
-        <input
-          type="text"
-          pInputText
-          id="nome"
-          [(ngModel)]="peca.nome"
-          required
-          autofocus
-        />
+        <input type="text" pInputText id="nome" [(ngModel)]="peca.nome" required autofocus />
         <small class="p-error" *ngIf="submitted && !peca.nome">
           Nome é obrigatório.
         </small>
       </div>
       <div class="field">
         <label for="codigo">Código</label>
-        <input
-          type="text"
-          pInputText
-          id="codigo"
-          [(ngModel)]="peca.codigo"
-          required
-        />
+        <input type="text" pInputText id="codigo" [(ngModel)]="peca.codigo" required />
       </div>
       <div class="formgrid grid">
         <div class="field col">
           <label for="preco">Preço</label>
-          <p-inputNumber
-            id="preco"
-            [(ngModel)]="peca.precoUnitario"
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-          ></p-inputNumber>
+          <p-inputNumber id="preco" [(ngModel)]="peca.precoUnitario" mode="currency" currency="BRL"
+            locale="pt-BR"></p-inputNumber>
         </div>
         <div class="field col">
           <label for="quantidade">Quantidade</label>

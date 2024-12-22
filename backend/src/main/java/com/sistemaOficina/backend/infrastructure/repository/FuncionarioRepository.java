@@ -1,7 +1,7 @@
 package com.sistemaOficina.backend.infrastructure.repository;
 import java.util.List;
 
-import com.sistemaOficina.backend.core.entidade.Funcionario;
+import com.sistemaOficina.backend.core.entity.Funcionario;
 
 
 public interface FuncionarioRepository {

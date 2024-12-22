@@ -1,7 +1,9 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
-import com.sistemaOficina.backend.core.entidade.*;
 import org.springframework.stereotype.Repository;
+
+import com.sistemaOficina.backend.core.entity.*;
+import com.sistemaOficina.backend.core.exception.ClienteNaoEncontradoException;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -27,16 +29,18 @@ public class ClienteRepositoryImpl {
 
         // Se o cliente não tem ID (é um novo cliente), faz um INSERT
         if (cliente.getId() == null) {
-            sql = "INSERT INTO cliente (nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj, inscricao_estadual, contato, tipo_cliente) " +
+            sql = "INSERT INTO cliente (nome, logradouro, numero, complemento, ddi1, ddd1, numero1, ddi2, ddd2, numero2, email, cpf, cnpj, inscricao_estadual, contato, tipo_cliente) "
+                    +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
             // Caso contrário, faz um UPDATE
-            sql = "UPDATE cliente SET nome = ?, logradouro = ?, numero = ?, complemento = ?, ddi1 = ?, ddd1 = ?, numero1 = ?, ddi2 = ?, ddd2 = ?, numero2 = ?, email = ?, " +
+            sql = "UPDATE cliente SET nome = ?, logradouro = ?, numero = ?, complemento = ?, ddi1 = ?, ddd1 = ?, numero1 = ?, ddi2 = ?, ddd2 = ?, numero2 = ?, email = ?, "
+                    +
                     "cpf = ?, cnpj = ?, inscricao_estadual = ?, contato = ?, tipo_cliente = ? WHERE id = ?";
         }
 
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, cliente.getNome());
             preparedStatement.setString(2, cliente.getLogradouro());
@@ -74,8 +78,8 @@ public class ClienteRepositoryImpl {
         String sql = "SELECT * FROM cliente ORDER BY nome ASC"; // Ordenação alfabética
 
         try (Connection connection = getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
                 Cliente cliente = new Cliente();
@@ -107,18 +111,15 @@ public class ClienteRepositoryImpl {
         return clientes;
     }
 
-    // Buscar cliente por ID
     public Cliente buscarPorId(Long id) {
-        Cliente cliente = null;
         String sql = "SELECT * FROM cliente WHERE id = ?";
-
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    cliente = new Cliente();
+                    Cliente cliente = new Cliente();
                     cliente.setId(resultSet.getLong("id"));
                     cliente.setNome(resultSet.getString("nome"));
                     cliente.setLogradouro(resultSet.getString("logradouro"));
@@ -136,15 +137,16 @@ public class ClienteRepositoryImpl {
                     cliente.setInscricaoEstadual(resultSet.getString("inscricao_estadual"));
                     cliente.setContato(resultSet.getString("contato"));
                     cliente.setTipoCliente(resultSet.getString("tipo_cliente"));
+                    return cliente;
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Erro ao buscar o cliente por ID", e);
         }
 
-        return cliente;
+        // Lança exceção caso o cliente não seja encontrado
+        throw new ClienteNaoEncontradoException("Cliente com ID " + id + " não encontrado.");
     }
 
     // Deletar cliente por ID
@@ -152,7 +154,7 @@ public class ClienteRepositoryImpl {
         String sql = "DELETE FROM cliente WHERE id = ?";
 
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();

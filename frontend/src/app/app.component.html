@@ -1,16 +1,44 @@
-<nav class="navbar">
-  <div class="navbar-title">
-     <a routerLink="/" routerLinkActive="active"> <h1>AutoGyn</h1></a>
+<div class="layout">
+  <div class="navbar">
+    <!-- Logo -->
+    <a href="#" class="logo">
+    </a>
+
+    <!-- Links -->
+    <a routerLink="/os" class="link" routerLinkActive="active">
+      <i class="pi pi-file"></i>
+    </a>
+    <a routerLink="/veiculos" class="link" routerLinkActive="active">
+      <i class="pi pi-car"></i>
+    </a>
+    <a routerLink="/estoque" class="link" routerLinkActive="active">
+      <i class="pi pi-box"></i>
+    </a>
+    <a routerLink="/servicos" class="link" routerLinkActive="active">
+      <i class="pi pi-wrench"></i>
+    </a>
+    <a class="link" (mouseenter)="toggleMenu()">
+      <i class="pi pi-users"></i>
+    </a>
+
+    <!-- Painel Customizado -->
+    <div class="custom-overlay" [class.show]="menuOpen">
+      <div class="overlay-content">
+        <ul class="menu-list">
+          <li class="menu-item"><a routerLink="/funcionarios" class="menu-link">Funcionários</a></li>
+          <li class="menu-item"><a routerLink="/clientes" class="menu-link">Clientes</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Logoff Section -->
+    <a href="#" class="logoff">
+      <i class="pi pi-power-off"></i>
+    </a>
   </div>
-  <ul class="navbar-links">
-    <a routerLink="/clientes" routerLinkActive="active">Clientes</a>
-    <a routerLink="/veiculos" routerLinkActive="active">Veículos</a>
-    <a routerLink="/servicos" routerLinkActive="active">Serviços</a>
-    <a routerLink="/estoque" routerLinkActive="active">Estoque</a>
-    <a routerLink="/os" routerLinkActive="active" >Ordens de Serviço</a>
-    <a routerLink="/funcionarios" routerLinkActive="active" style="margin-right: 10px;">Funcionários </a>
-  </ul>
-</nav>
 
-<router-outlet></router-outlet>
-
+  <!-- Main Content -->
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

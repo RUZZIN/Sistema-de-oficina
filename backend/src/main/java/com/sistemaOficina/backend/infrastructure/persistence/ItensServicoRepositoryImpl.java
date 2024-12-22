@@ -1,9 +1,9 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
 
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.FuncionarioRepository;
 import com.sistemaOficina.backend.infrastructure.repository.ItensServicoRepository;
-import com.sistemaOficina.backend.core.entidade.*;
 
 import java.sql.*;
 import java.util.ArrayList;

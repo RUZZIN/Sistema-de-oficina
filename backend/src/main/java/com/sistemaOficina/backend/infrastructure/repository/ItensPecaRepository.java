@@ -1,7 +1,7 @@
 package com.sistemaOficina.backend.infrastructure.repository;
-import com.sistemaOficina.backend.core.entidade.*;
-
 import java.util.List;
+
+import com.sistemaOficina.backend.core.entity.*;
 
 public interface ItensPecaRepository {
     void salvar(ItensPeca itensPeca);

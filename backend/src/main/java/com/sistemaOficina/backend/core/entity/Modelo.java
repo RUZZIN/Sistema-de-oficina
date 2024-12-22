@@ -1,4 +1,4 @@
-package com.sistemaOficina.backend.core.entidade;
+package com.sistemaOficina.backend.core.entity;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;

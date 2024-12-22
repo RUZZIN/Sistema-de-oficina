@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-import com.sistemaOficina.backend.core.entidade.*;
+
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.AcessorioRepository;
 
 @Repository

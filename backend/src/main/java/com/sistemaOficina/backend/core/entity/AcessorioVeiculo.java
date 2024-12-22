@@ -1,4 +1,4 @@
-package com.sistemaOficina.backend.core.entidade;
+package com.sistemaOficina.backend.core.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

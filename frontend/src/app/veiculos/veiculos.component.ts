@@ -15,11 +15,15 @@ import { ButtonModule } from 'primeng/button'; // Para o botão
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ButtonModule, DialogModule],
   template: `
-     <div class="container">
+  <h1 class="text-center text-2xl font-bold my-4">Veiculos</h1>
 
+  <div class="">
+  <div class="grid">
+  <div class="col-13" style="display: flex; justify-content: flex-end; margin:10px; margin-right: 16px;">
   <!-- Botão para abrir o dialog -->
-  <button pButton label="Adicionar Veículo" icon="pi pi-plus" (click)="openDialog()"></button>
-
+  <button pButton label="Adicionar" icon="pi pi-plus" (click)="openDialog()"></button>
+  </div>
+  </div>
   <!-- Dialog do formulário -->
   <p-dialog header="{{ editMode ? 'Editar Veículo' : 'Adicionar Veículo' }}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{ width: '20%' }">
     <form [formGroup]="veiculoForm" (ngSubmit)="saveVeiculo()">
@@ -96,8 +100,8 @@ import { ButtonModule } from 'primeng/button'; // Para o botão
         <td>{{ veiculo.chassi }}</td>
         <td>{{ veiculo.patrimonio }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" (click)="editVeiculo(veiculo)"></button>
-          <button pButton icon="pi pi-trash" (click)="deleteVeiculo(veiculo.placa!)"></button>
+          <button pButton icon="pi pi-pencil" severity="success" (click)="editVeiculo(veiculo)"></button>
+          <button pButton severity="danger" icon="pi pi-trash" (click)="deleteVeiculo(veiculo.placa!)"></button>
         </td>
       </tr>
     </tbody>

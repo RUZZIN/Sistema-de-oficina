@@ -1,6 +1,6 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
-import com.sistemaOficina.backend.core.entidade.*;
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.FuncionarioRepository;
 
 import java.math.BigDecimal;

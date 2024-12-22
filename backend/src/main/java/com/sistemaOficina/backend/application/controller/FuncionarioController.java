@@ -2,7 +2,7 @@ package com.sistemaOficina.backend.application.controller;
 
 
 
-import com.sistemaOficina.backend.core.entidade.*;
+import com.sistemaOficina.backend.core.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.FuncionarioRepository;
 
 import org.springframework.http.HttpStatus;
