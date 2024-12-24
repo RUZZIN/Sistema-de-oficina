@@ -2,7 +2,7 @@ package com.sistemaOficina.backend.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 
-import com.sistemaOficina.backend.core.entity.*;
+import com.sistemaOficina.backend.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;

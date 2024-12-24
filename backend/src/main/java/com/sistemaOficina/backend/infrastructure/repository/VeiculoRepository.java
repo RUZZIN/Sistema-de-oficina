@@ -2,7 +2,7 @@ package com.sistemaOficina.backend.infrastructure.repository;
 
 import java.util.List;
 
-import com.sistemaOficina.backend.core.entity.*;
+import com.sistemaOficina.backend.entity.*;
 
 public interface VeiculoRepository {
     void salvar(Veiculo veiculo);

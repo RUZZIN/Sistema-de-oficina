@@ -1,6 +1,6 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
-import com.sistemaOficina.backend.core.entity.*;
+import com.sistemaOficina.backend.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.ServicoRepository;
 
 import org.springframework.stereotype.Repository;

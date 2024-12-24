@@ -4,7 +4,7 @@ import com.sistemaOficina.backend.infrastructure.repository.OrdemServicoReposito
 
 import org.springframework.stereotype.Repository;
 
-import com.sistemaOficina.backend.core.entity.*;
+import com.sistemaOficina.backend.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.*;
 
 import javax.sql.DataSource;

@@ -1,10 +1,10 @@
 package com.sistemaOficina.backend.infrastructure.persistence;
 
-import com.sistemaOficina.backend.core.entity.*;
+import com.sistemaOficina.backend.entity.*;
 import com.sistemaOficina.backend.infrastructure.repository.ModeloRepository;
+import com.sistemaOficina.backend.infrastructure.service.*;
 
 import org.springframework.stereotype.Repository;
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import java.util.List;
 public class ModeloRepositoryImpl implements ModeloRepository {
 
     private final DataSource dataSource;
-    private final MarcaRepositoryImpl marcaRepositoryImpl;
+    private final MarcaService marcaService;
 
-    public ModeloRepositoryImpl(DataSource dataSource, MarcaRepositoryImpl marcaRepositoryImpl) {
+    public ModeloRepositoryImpl(DataSource dataSource, MarcaService marcaService) {
         this.dataSource = dataSource;
-        this.marcaRepositoryImpl = marcaRepositoryImpl;
+        this.marcaService = marcaService;
     }
 
     private Connection getConnection() throws SQLException {
@@ -92,7 +92,7 @@ public class ModeloRepositoryImpl implements ModeloRepository {
     }
 
     private Modelo mapResultSetToModelo(ResultSet rs) throws SQLException {
-        Marca marca = marcaRepositoryImpl.buscarPorId(rs.getLong("id_marca"));
+        Marca marca = marcaService.buscarPorId(rs.getLong("id_marca")).orElse(null);
         return new Modelo(
                 rs.getLong("id"),
                 rs.getString("nome"),

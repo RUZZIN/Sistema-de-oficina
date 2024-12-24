@@ -1,13 +1,9 @@
 package com.sistemaOficina.backend.infrastructure.repository;
 
-import java.util.List;
+import com.sistemaOficina.backend.entity.Marca;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.sistemaOficina.backend.core.entity.*;
-
-public interface MarcaRepository {
-    void salvar(Marca marca);
-    void atualizar(Marca marca);
-    void deletar(Long id);
-    Marca buscarPorId(Long id);
-    List<Marca> buscarTodos();
+@Repository
+public interface MarcaRepository extends JpaRepository<Marca, Long> {
 }
